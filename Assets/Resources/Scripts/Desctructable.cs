@@ -17,10 +17,9 @@ namespace  LaninCode
         private WeaponCursor _weaponCursor;
         private WeaponBack _chosenWeapon;
         private IOnDamage _destructee = null;
-        
         public int Health => _health;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             _renderer = GetComponent<SpriteRenderer>();
             _collider = GetComponent<Collider2D>();
@@ -35,7 +34,6 @@ namespace  LaninCode
             if (!_chosenWeapon.IsInstant) return;
             _health -= _chosenWeapon.Damage;
             _weaponCursor.OnAttackFinished();
-            _weaponCursor = null;
         }
 
 
@@ -43,19 +41,13 @@ namespace  LaninCode
         {
             if(!_checker.CheckForAppropriateTag(other.tag) ||  !_checker.IsObjectOutOfCollider(other)) return;
             _weaponCursor = null;
-
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (_weaponCursor is null || !_weaponCursor.IsShooting) return;
             _health -= _chosenWeapon.Damage;
-            Debug.Log(_health);
-            if (_destructee is null)
-            {
-                throw new NullReferenceException("destructee was not set");
-            }
-            _destructee.DestroyObject();
+            _destructee.SetHealth(_health);
         }
 
         public void Activate(OnOff onOff)

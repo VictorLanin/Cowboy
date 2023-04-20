@@ -14,20 +14,12 @@ namespace LaninCode
         private float _horAxis;
         private Desctructable _desctructable;
         private bool _isJumping;
-        
-        private readonly List<string> _namesOfWeapons = new List<string>()
-        {
-            "MachineGun"
-        };
-        
-        
-        public string ChosenWeaponName { get; private set; }
 
         private void Awake()
         {
-            ChosenWeaponName = _namesOfWeapons[0];
             _rbody = GetComponent<Rigidbody2D>();
             _desctructable = GetComponent<Desctructable>();
+            _desctructable.SetDestructee(this);
         }
 
         private void Update()
@@ -55,7 +47,7 @@ namespace LaninCode
         }
 
 
-        public void DestroyObject()
+        public void SetHealth(int health)
         {
             if (_desctructable.Health > 0) return;
             Debug.Log("Game over!");

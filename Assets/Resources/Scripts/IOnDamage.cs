@@ -2,6 +2,6 @@ namespace LaninCode
 {
     public interface IOnDamage
     {
-        void DestroyObject();
+        void SetHealth(int health);
     }
 }

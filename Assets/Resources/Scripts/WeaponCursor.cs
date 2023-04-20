@@ -6,7 +6,6 @@ namespace LaninCode
     {
         [SerializeField] private string _nameOfWeapon;
         public bool IsShooting { get; set; }
-        //TODO изменим класс. чтобы он содержал не только имя 
         public string NameOfWeapon
         {
             get => _nameOfWeapon;

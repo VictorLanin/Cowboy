@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using Resources.Scripts;
 using Tests;
 using Unity.VisualScripting;
@@ -9,16 +11,13 @@ namespace LaninCode
 {
     [RequireComponent(typeof(WeaponCursor))]
     [RequireComponent(typeof(Collider2D))]
-    [RequireComponent(typeof(Rigidbody2D))]
     public class Projectile : Poolable, IOnAttackFinished
     {
         [SerializeField] private string nameOfProjectile;
         private WeaponCursor _cursor;
         private Collider2D _collider2D;
         private SpriteRenderer _renderer;
-        private float _speed = 5f;
-        private Vector3 _playerPosition=Vector3.positiveInfinity;
-        private Vector3 _positionToComeBack;
+        private float _speed = 3f;
         private void Awake()
         {
             _cursor = GetComponent<WeaponCursor>();
@@ -26,32 +25,29 @@ namespace LaninCode
             _renderer = GetComponent<SpriteRenderer>();
             _cursor = GetComponent<WeaponCursor>();
             _cursor.Attacker = this;
-            _cursor.IsShooting = true;
-            Attack();
         }
         
-
         public void Attack()
         {
-            _playerPosition = GameManager.MainPlayer.gameObject.transform.position;
-            _positionToComeBack = transform.position;
+            var playerPos = GameManager.MainPlayer.gameObject.transform.position;
+            StartCoroutine(MoveTo(playerPos));
         }
 
-        private void Update()
+        private IEnumerator MoveTo(Vector3 playerPos)
         {
-            if (_playerPosition.Equals(Vector3.positiveInfinity)) return;
-            transform.position=Vector3.MoveTowards(transform.position, _playerPosition, _speed);
+            while (!transform.position.Equals(playerPos))
+            {
+                transform.position=Vector3.MoveTowards(transform.position, playerPos, _speed*Time.deltaTime);
+                yield return null;
+            }
         }
         
-
         public override void Activate(OnOff onOff)
         {
-            _playerPosition = Vector3.positiveInfinity;
             _collider2D.enabled = onOff == OnOff.On;
             _renderer.enabled=onOff == OnOff.On;
         }
-
-        public override string Name { get; }
+        public override string Name => nameOfProjectile;
         public void OnAttackFinished()
         {
             Activate(OnOff.Off);
