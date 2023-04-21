@@ -1,17 +1,11 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using Resources.Scripts;
-using Tests;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace LaninCode
 {
     [RequireComponent(typeof(WeaponCursor))]
     [RequireComponent(typeof(Collider2D))]
-    public class Projectile : Poolable, IOnAttackFinished
+    public class Projectile : Poolable
     {
         [SerializeField] private string nameOfProjectile;
         private WeaponCursor _cursor;
@@ -24,7 +18,6 @@ namespace LaninCode
             _collider2D = GetComponent<Collider2D>();
             _renderer = GetComponent<SpriteRenderer>();
             _cursor = GetComponent<WeaponCursor>();
-            _cursor.Attacker = this;
         }
         
         public void Attack()
@@ -40,6 +33,7 @@ namespace LaninCode
                 transform.position=Vector3.MoveTowards(transform.position, playerPos, _speed*Time.deltaTime);
                 yield return null;
             }
+            
         }
         
         public override void Activate(OnOff onOff)

@@ -1,27 +1,27 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace LaninCode
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
-    [RequireComponent(typeof(Desctructable))]
+    [RequireComponent(typeof(Destructable))]
     public class Player:MonoBehaviour,IOnDamage
     {
         private const float _speed = 5f;
         private Rigidbody2D _rbody;
         private float _horAxis;
-        private Desctructable _desctructable;
+        private Destructable _destructable;
         private bool _isJumping;
-
+        private static PlayerCursor _cursor;
         private void Awake()
         {
             _rbody = GetComponent<Rigidbody2D>();
-            _desctructable = GetComponent<Desctructable>();
-            _desctructable.SetDestructee(this);
+            _destructable = GetComponent<Destructable>();
+            _destructable.SetDestructee(this);
+            _cursor = GetComponentInChildren<PlayerCursor>(true);
         }
 
+        
         private void Update()
         {
             
@@ -42,14 +42,12 @@ namespace LaninCode
             {
                 _rbody.velocity = Vector2.right * (_speed * _horAxis);
             }
-            
-            
         }
 
 
-        public void SetHealth(int health)
+        public void SetHealth(float health)
         {
-            if (_desctructable.Health > 0) return;
+            if (_destructable.Health > 0) return;
             Debug.Log("Game over!");
         }
     }

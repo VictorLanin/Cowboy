@@ -1,8 +1,6 @@
-using Tests;
-using UnityEditor;
+
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.Windows.WebCam;
 
 namespace LaninCode
 {

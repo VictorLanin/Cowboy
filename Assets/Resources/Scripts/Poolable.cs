@@ -1,6 +1,4 @@
-using System;
-using Tests;
-using Unity.VisualScripting;
+
 using UnityEngine;
 
 namespace LaninCode

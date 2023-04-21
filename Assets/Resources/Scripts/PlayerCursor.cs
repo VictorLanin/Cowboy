@@ -14,20 +14,21 @@ namespace LaninCode
         private float _verAxis;
         private LineRenderer _lineRenderer;
         private Rigidbody2D _rbody;
-        public bool IsShooting => _cursor.IsShooting;
-        private WeaponCursor _cursor;
-        public string NameOfWeapon => _cursor.NameOfWeapon;
+
         private readonly List<string> _namesOfWeapons = new List<string>()
         {
             "MachineGun"
         };
+
+        public static WeaponCursor WeapCursor { get; private set; }
+
         private void Awake()
         {
             _player = GetComponentInParent<Player>();
             _lineRenderer = GetComponent<LineRenderer>();
             _rbody = GetComponent<Rigidbody2D>();
-            _cursor = GetComponent<WeaponCursor>();
-            _cursor.NameOfWeapon = _namesOfWeapons[0];
+            WeapCursor = GetComponent<WeaponCursor>();
+            WeapCursor.SetWeapon(_namesOfWeapons[0]);
         }
 
         private void Update()
@@ -35,9 +36,9 @@ namespace LaninCode
             _horAxis = Input.GetAxis("Shoot Hor");
             _verAxis = Input.GetAxis("Shoot Ver");
             _rbody.velocity = new Vector2(_horAxis,_verAxis);
-            _cursor.IsShooting = Input.GetButton("Fire1");
-            _lineRenderer.enabled = _cursor.IsShooting;
-            if (!_cursor.IsShooting) return;
+            WeapCursor.IsShooting = Input.GetButton("Fire1");
+            _lineRenderer.enabled = WeapCursor.IsShooting;
+            if (!WeapCursor.IsShooting) return;
             UpdateLineRenderer();
         }
 
@@ -46,6 +47,7 @@ namespace LaninCode
             _lineRenderer.SetPosition(0,_player.transform.position);
             _lineRenderer.SetPosition(1,transform.position);
         }
+        
         
     }
 }   
