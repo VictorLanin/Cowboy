@@ -3,24 +3,24 @@ using UnityEngine;
 
 namespace LaninCode
 {
-    [RequireComponent(typeof(WeaponCursor))]
+    [RequireComponent(typeof(WeaponInGameObject))]
     [RequireComponent(typeof(Collider2D))]
     public class Projectile : Poolable
     {
         [SerializeField] private string nameOfProjectile;
-        private WeaponCursor _cursor;
+        private WeaponInGameObject _inGameObject;
         private Collider2D _collider2D;
         private SpriteRenderer _renderer;
         private float _speed = 3f;
         private void Awake()
         {
-            _cursor = GetComponent<WeaponCursor>();
+            _inGameObject = GetComponent<WeaponInGameObject>();
             _collider2D = GetComponent<Collider2D>();
             _renderer = GetComponent<SpriteRenderer>();
-            _cursor = GetComponent<WeaponCursor>();
+            _inGameObject = GetComponent<WeaponInGameObject>();
         }
         
-        public void Attack()
+        public void MoveToTarget()
         {
             var playerPos = GameManager.MainPlayer.gameObject.transform.position;
             StartCoroutine(MoveTo(playerPos));
@@ -30,10 +30,9 @@ namespace LaninCode
         {
             while (!transform.position.Equals(playerPos))
             {
-                transform.position=Vector3.MoveTowards(transform.position, playerPos, _speed*Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, playerPos, _speed * Time.deltaTime);
                 yield return null;
             }
-            
         }
         
         public override void Activate(OnOff onOff)
@@ -45,7 +44,7 @@ namespace LaninCode
         public void OnAttackFinished()
         {
             Activate(OnOff.Off);
-            _cursor.IsShooting = false;
+            _inGameObject.SetCanDamage(false);
         }
     }
 }

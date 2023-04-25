@@ -4,17 +4,17 @@ using UnityEngine.Pool;
 
 namespace LaninCode
 {
-    [RequireComponent(typeof(NonPlayerDestructable))]
+    [RequireComponent(typeof(Destructable))]
     public class Enemy : Poolable,IOnDamage
     {
         [SerializeField] string _nameOfEnemy;
-        private NonPlayerDestructable _destructable;
+        private Destructable _destructable;
         private Animator _animator;
         private int _health;
 
         private void Awake()
         {
-            _destructable=GetComponent<NonPlayerDestructable>();
+            _destructable=GetComponent<Destructable>();
             _animator = GetComponent<Animator>();
             _destructable.SetDestructee(this);
             _health=Animator.StringToHash("Health");

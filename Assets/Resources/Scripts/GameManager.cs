@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using Resources.Scripts;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -9,28 +9,34 @@ namespace LaninCode
     public class GameManager : MonoBehaviour
     {
         public static Player MainPlayer { get; private set; }
-        public static List<WeaponCursor> UsedCursors { get; } = new List<WeaponCursor>(10);
 
-        private  void Awake()
+        public static Dictionary<TypeOfCursor, List<WeaponInGameObject>> AvailableCursors =
+            new Dictionary<TypeOfCursor, List<WeaponInGameObject>>()
+            {
+
+                { TypeOfCursor.Player, new List<WeaponInGameObject>(4) },
+                { TypeOfCursor.Enemy, new List<WeaponInGameObject>(50) }
+            };
+        
+        private void Awake()
         {
             MainPlayer = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-            
         }
-
         
-        public static WeaponCursor GetCursor(int idOfCursor)
+        public static WeaponInGameObject GetCursor(TypeOfCursor cursorType,int idOfCursor)
         {
-            for (int i = 0; i < UsedCursors.Count; i++)
+            var cursors = AvailableCursors[cursorType];
+            for (int i = 0; i < cursors.Count; i++)
             {
-                if(idOfCursor!=UsedCursors[i].gameObject.GetInstanceID()) continue;
-                return UsedCursors[i];
+                if(idOfCursor!=cursors[i].gameObject.GetInstanceID()) continue;
+                return cursors[i];
             }
             throw new NullReferenceException("no cursor with that id");
         }
 
         private void OnDestroy()
         {
-            UsedCursors.Clear();
+            AvailableCursors.Clear();
         }
     }
 }

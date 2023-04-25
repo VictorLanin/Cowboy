@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LaninCode
 {
-    public class MovingEnemy : MonoBehaviour
+    public class MoveByPoints : MonoBehaviour
     {
         [SerializeField] private Vector3[] _points;
         private Stack<Vector3> _pointsStack;

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace LaninCode
@@ -12,15 +15,16 @@ namespace LaninCode
         private float _horAxis;
         private Destructable _destructable;
         private bool _isJumping;
-        private static PlayerCursor _cursor;
+        private PlayerCursor _playerCursor;
+        
+         
         private void Awake()
         {
             _rbody = GetComponent<Rigidbody2D>();
             _destructable = GetComponent<Destructable>();
             _destructable.SetDestructee(this);
-            _cursor = GetComponentInChildren<PlayerCursor>(true);
+            _playerCursor = GetComponent<PlayerCursor>();
         }
-
         
         private void Update()
         {
@@ -50,5 +54,33 @@ namespace LaninCode
             if (_destructable.Health > 0) return;
             Debug.Log("Game over!");
         }
+
+        private Dictionary<string, int> _currentAmmoSupply = new Dictionary<string, int>()
+        { 
+            { "Grenade", 2 }
+        };
+
+        public void AddAmmo(string nameOfWeapon,int amountToAdd)
+        {
+            var weaponAmmo = WeaponInGameObject.GetWeaponBack(nameOfWeapon) as ILimitedAmmo;
+            if (weaponAmmo == null) throw new InvalidCastException($"Cant cast {nameOfWeapon} to ILimitedAmmo");
+            var currentAmount = _currentAmmoSupply[nameOfWeapon];
+            var posAmmoAmount = currentAmount + amountToAdd;
+            _currentAmmoSupply[nameOfWeapon] = posAmmoAmount < weaponAmmo.MaxAmmo ? posAmmoAmount : weaponAmmo.MaxAmmo;
+        }
+
+        public string Ammo
+        {
+            get
+            {
+                var weaponName = _playerCursor.WeapInGameObject.CurrentWeapon.Name;
+                var ammoAmount= _playerCursor.WeapInGameObject.CurrentWeapon is ILimitedAmmo
+                    ? _currentAmmoSupply[weaponName]
+                    : -1;
+                return ammoAmount.ToString();
+            }
+
+        }
+
     }
 }

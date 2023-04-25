@@ -1,27 +1,63 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using Resources.Scripts;
 using UnityEngine;
 
 namespace LaninCode
 {
-    [RequireComponent(typeof(SpriteRenderer))]
-    [RequireComponent(typeof(Collider2D))]
-    public class Destructable : MonoBehaviour
+    public class Destructable :MonoBehaviour
     {
-        private SpriteRenderer _renderer;
+        [SerializeField] private string _tagOfWeapon = "PlayerWeapon";
+        private WeaponInGameObject _weaponInGameObject;
+        protected SpriteRenderer _renderer;
         private Collider2D _collider;
         [SerializeField] private float _maxHealth=100;
         private float _curHealth;
+        
         public float Health
         {
             get => _curHealth/_maxHealth;
         }
-        protected IOnDamage _destructee = null;
-        protected CollisionChecker _checker;
-        protected virtual void Awake()
+        private IOnDamage _destructee = null;
+        private CollisionChecker _checker;
+        private void Awake()
         {
+            _checker=CollisionChecker.CreateInstance(new List<string>(){_tagOfWeapon});
             _renderer = GetComponent<SpriteRenderer>();
             _collider = GetComponent<Collider2D>();
             _curHealth = _maxHealth;
+        }
+        
+        private void OnTriggerEnter2D(Collider2D col)
+        {
+            if(!_checker.CheckForAppropriateTag(col.tag)) return;
+             _weaponInGameObject = GameManager.GetCursor(TypeOfCursor.Player,col.gameObject.GetInstanceID());
+             StartCoroutine(CheckForDamage());
+        }
+
+        //todo потом удалить изменение цветов
+        public IEnumerator CheckForDamage()
+        {
+            var weapon=_weaponInGameObject.CurrentWeapon;
+            Debug.Log("dasdasda");
+            while (Health>0)
+            {
+                if (_weaponInGameObject.CanDamage)
+                {
+                    weapon.ApplyDamage(this);
+                    _renderer.color=Color.red;
+                    yield return (weapon is IDelay delayable)? new WaitForSeconds(delayable.Delay) : null;
+                }
+                _renderer.color = Color.white;
+                yield return null;
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if(!_checker.CheckForAppropriateTag(other.tag) ||  !_checker.IsObjectOutOfCollider(other)) return;
+            StopCoroutine(CheckForDamage());
         }
 
         public void Activate(OnOff onOff)
@@ -36,14 +72,12 @@ namespace LaninCode
             _destructee = destr;
         }
 
-        protected void GetDamage(int damage)
+        public void GetDamage(int damage)
         {
-            if (_curHealth - damage < 0)
-            {
-                _curHealth = 0;
-                return;
-            }
-            _curHealth -= damage;
+            var posDamage = _curHealth - damage;
+            _curHealth = posDamage <= 0 ? 0 : posDamage;
+            _destructee.SetHealth(_curHealth);
         }
     }
+    
 }

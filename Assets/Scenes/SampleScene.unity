@@ -198,7 +198,7 @@ GameObject:
   - component: {fileID: 367266972}
   m_Layer: 0
   m_Name: Cursor
-  m_TagString: Weapon
+  m_TagString: PlayerWeapon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1116,7 +1116,7 @@ MonoBehaviour:
   thumb: {fileID: 0}
   mBG: {fileID: 0}
   mFG: {fileID: 0}
-  mValue: 0.9
+  mValue: 0
   mFill: 0
   numberOfSteps: 0
   onChange: []
@@ -1528,12 +1528,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1605252751}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d389639ce43f4fffbaa63859ac08e714, type: 3}
+  m_Script: {fileID: 11500000, guid: fb80380cf1e64a26aa4e067f8d4c3df7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
-  _curHealth: 90
   _tagOfWeapon: EnemyWeapon
+  _maxHealth: 100
 --- !u!1 &2037216847
 GameObject:
   m_ObjectHideFlags: 0
@@ -1674,14 +1673,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: _tagOfWeapon
-      value: PlayerWeapon
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: _nameOfWeapon
-      value: Pistol
-      objectReference: {fileID: 0}
     - target: {fileID: 3387426679623829508, guid: 2d54d9405fd1a837f8a30cbe6903092a, type: 3}
       propertyPath: m_Name
       value: Fly
@@ -1726,4 +1717,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb80380cf1e64a26aa4e067f8d4c3df7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
+  _tagOfWeapon: PlayerWeapon
+  _maxHealth: 20
