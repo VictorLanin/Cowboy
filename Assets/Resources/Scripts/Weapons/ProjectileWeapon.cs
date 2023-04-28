@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,24 +9,27 @@ namespace LaninCode
         [SerializeField] private Projectile _projectile;
 
         private ProjectileInstancer _instancer;
-        protected override void Awake()
+        public bool CanInstantiate => _instancer.CanInstantiate;
+        public Func<Vector3> GetPosition { get; set; }
+        
+        public override void Awake()
         {
             base.Awake();
             _instancer = ProjectileInstancer.CreateInstance(_projectile.name, 5);
+            _projectile.WeaponGameObject = this;
         }
-        
-        public override void SetCanDamage(bool canDamage)
+        public override void StartFiring(bool isFiring)
         {
-            base.SetCanDamage(canDamage);
-            if (!canDamage) return;
+            base.StartFiring(isFiring);
+            if (!isFiring) return;
             InstantiateProjectile();
-            
             void InstantiateProjectile()
             {
                 if(!_instancer.CanInstantiate) return;
                 StartCoroutine(_instancer.Delay());
-                Instantiate(_projectile.gameObject);
-                _projectile.MoveToTarget();
+               var proj= Instantiate(_projectile.gameObject);
+               var projScr = proj.GetComponent<Projectile>(); 
+               projScr.MoveToTarget(GetPosition());
             }
         }
         
@@ -37,6 +41,7 @@ namespace LaninCode
             {
                 NameOfProjectile = nameOfProjectile;
                 DelayToInstantiate = delayToInstantiate;
+                CanInstantiate = true;
             }
 
             public static ProjectileInstancer CreateInstance(string nameOfProjectile, int delayToInstantiate)
@@ -55,7 +60,9 @@ namespace LaninCode
                     yield return new WaitForSeconds(0.1f);
                 }
                 CanInstantiate = true;
-            }
+            } 
         }
+
+        public override bool CanDamage { get; } = true;
     }
 }

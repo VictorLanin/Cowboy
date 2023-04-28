@@ -1,50 +1,57 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LaninCode
 {
-    [RequireComponent(typeof(WeaponInGameObject))]
     [RequireComponent(typeof(Collider2D))]
-    public class Projectile : Poolable
+    [RequireComponent(typeof(Animator))]
+    public class Projectile : Poolable,IGetWeapon
     {
         [SerializeField] private string nameOfProjectile;
-        private WeaponInGameObject _inGameObject;
         private Collider2D _collider2D;
         private SpriteRenderer _renderer;
-        private float _speed = 3f;
+        private Animator _anim;
+        private float _speed = 2f;
         private void Awake()
         {
-            _inGameObject = GetComponent<WeaponInGameObject>();
             _collider2D = GetComponent<Collider2D>();
             _renderer = GetComponent<SpriteRenderer>();
-            _inGameObject = GetComponent<WeaponInGameObject>();
+            _anim = GetComponent<Animator>();
+            name = nameOfProjectile;
         }
         
-        public void MoveToTarget()
+        /// <summary>
+        /// Coroutine for projectile movement
+        /// </summary>
+        /// <param name="destination"> location go to </param>
+        public void MoveToTarget(Vector3 destination)
         {
-            var playerPos = GameManager.MainPlayer.gameObject.transform.position;
-            StartCoroutine(MoveTo(playerPos));
+            StartCoroutine(MoveTo(destination));
         }
 
-        private IEnumerator MoveTo(Vector3 playerPos)
+        private IEnumerator MoveTo(Vector3 destination)
         {
-            while (!transform.position.Equals(playerPos))
+            while (!transform.position.Equals(destination))
             {
-                transform.position = Vector3.MoveTowards(transform.position, playerPos, _speed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, destination, _speed * Time.deltaTime);
                 yield return null;
             }
+            _anim.SetTrigger("BlowUp");
         }
-        
+        /// <summary>
+        /// "Turns" On-Off specific gameobject without disabling it off completely 
+        /// </summary>
+        /// <param name="onOff"></param>
         public override void Activate(OnOff onOff)
         {
             _collider2D.enabled = onOff == OnOff.On;
             _renderer.enabled=onOff == OnOff.On;
+            _anim.StopPlayback();
         }
         public override string Name => nameOfProjectile;
-        public void OnAttackFinished()
-        {
-            Activate(OnOff.Off);
-            _inGameObject.SetCanDamage(false);
-        }
+
+        public WeaponInGameObject WeaponGameObject { get; set; } = null;
+        
     }
 }

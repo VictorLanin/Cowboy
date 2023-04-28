@@ -10,7 +10,7 @@ namespace LaninCode
     [RequireComponent(typeof(Destructable))]
     public class Player:MonoBehaviour,IOnDamage
     {
-        private const float _speed = 5f;
+        private const float _speed = 10f;
         private Rigidbody2D _rbody;
         private float _horAxis;
         private Destructable _destructable;
@@ -18,12 +18,12 @@ namespace LaninCode
         private PlayerCursor _playerCursor;
         
          
-        private void Awake()
+        public void Awake()
         {
+            _playerCursor = GetComponentInChildren<PlayerCursor>(true);
             _rbody = GetComponent<Rigidbody2D>();
             _destructable = GetComponent<Destructable>();
             _destructable.SetDestructee(this);
-            _playerCursor = GetComponent<PlayerCursor>();
         }
         
         private void Update()
@@ -55,12 +55,12 @@ namespace LaninCode
             Debug.Log("Game over!");
         }
 
-        private Dictionary<string, int> _currentAmmoSupply = new Dictionary<string, int>()
+        private Dictionary<WeaponName, int> _currentAmmoSupply = new ()
         { 
-            { "Grenade", 2 }
+            { WeaponName.Grenade, 4 }
         };
 
-        public void AddAmmo(string nameOfWeapon,int amountToAdd)
+        public void AddAmmo(WeaponName nameOfWeapon,int amountToAdd)
         {
             var weaponAmmo = WeaponInGameObject.GetWeaponBack(nameOfWeapon) as ILimitedAmmo;
             if (weaponAmmo == null) throw new InvalidCastException($"Cant cast {nameOfWeapon} to ILimitedAmmo");
@@ -69,18 +69,32 @@ namespace LaninCode
             _currentAmmoSupply[nameOfWeapon] = posAmmoAmount < weaponAmmo.MaxAmmo ? posAmmoAmount : weaponAmmo.MaxAmmo;
         }
 
+        public void ReduceAmmo(WeaponBack weapon)
+        {
+            var currentAmount = _currentAmmoSupply[weapon.Name];
+            var posAmmoAmount = currentAmount - ((ILimitedAmmo)weapon).ReduceAmmoRate;
+            _currentAmmoSupply[weapon.Name] = posAmmoAmount > 0 ? posAmmoAmount :0;
+        }
+
         public string Ammo
         {
             get
             {
-                var weaponName = _playerCursor.WeapInGameObject.CurrentWeapon.Name;
-                var ammoAmount= _playerCursor.WeapInGameObject.CurrentWeapon is ILimitedAmmo
-                    ? _currentAmmoSupply[weaponName]
-                    : -1;
+                var ammoAmount = GetAmountOfAmmo();
                 return ammoAmount.ToString();
             }
-
+        }
+        
+        public int GetAmountOfAmmo()
+        {
+            if (_playerCursor == null) return -1;
+            var weaponName = _playerCursor.SelectedWeaponGameObject.EquipedWeapon.Name;
+            var ammoAmount = _playerCursor.SelectedWeaponGameObject.EquipedWeapon is ILimitedAmmo
+                ? _currentAmmoSupply[weaponName]
+                : -1;
+            return ammoAmount;
         }
 
+        public Vector3 CursorPosistion => _playerCursor.transform.position;
     }
 }

@@ -4,11 +4,10 @@ namespace LaninCode
     {
         private int _ammoCount;
         
-        public MachineGunBack(string name, int damage, float delay) : base(name, damage)
+        public MachineGunBack(WeaponName name, int damage, float delay) : base(name, damage)
         {
             Delay = delay;
         }
-        
         public float Delay { get; }
     }
 }

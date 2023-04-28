@@ -2,21 +2,27 @@
 {
     public abstract class WeaponBack
     {
-        public readonly string Name;
+
+        public readonly WeaponName Name;
         public readonly int Damage;
         
-        public WeaponBack(string name, int damage)
+        public WeaponBack(WeaponName name, int damage)
         {
             Name = name;
             Damage = damage;
         }
         
-        public static WeaponBack CreateInstance(string name)
+        public static WeaponBack CreateInstance(WeaponName name)
         {
             WeaponBack weapon;
             switch (name)
             {
-                default: weapon=new MachineGunBack("MachineGun", 5,0.2f);
+                case WeaponName.Grenade:
+                {
+                    weapon = new GrenadeBack(WeaponName.Grenade, 20, 10, 1, 5f);
+                    break;
+                }
+                default: weapon=new MachineGunBack(WeaponName.MachineGun, 5,0.2f);
                     break;
             }
             return weapon;

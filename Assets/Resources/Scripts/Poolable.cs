@@ -2,8 +2,9 @@
 using UnityEngine;
 
 namespace LaninCode
-{
-    //base class for object goind into ObjectPools
+{ /// <summary>
+  /// base class for object going into ObjectPools
+  /// </summary>
     public abstract class Poolable:MonoBehaviour
     {
         public abstract void Activate(OnOff onOff);

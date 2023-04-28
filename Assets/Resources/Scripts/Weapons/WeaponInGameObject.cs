@@ -1,47 +1,69 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace LaninCode
 {
-    public class WeaponInGameObject : MonoBehaviour
+    public class WeaponInGameObject : MonoBehaviour,IGetWeapon
     {
-        private static Dictionary<string, WeaponBack> _weapons;
-        private bool _canDamage;
-        public  WeaponBack CurrentWeapon { get; private set; }
-
-        public bool CanDamage => _canDamage;
-
-        public virtual void SetCanDamage(bool canDamage)
+        public enum TypeOfWeapon
         {
-            _canDamage = canDamage;
+            CursorBased,ProjectileBased
+        }
+        private static Dictionary<WeaponName, WeaponBack> _weapons=new ()
+        {
+            { WeaponName.MachineGun ,WeaponBack.CreateInstance(WeaponName.MachineGun)},
+            { WeaponName.Grenade ,WeaponBack.CreateInstance(WeaponName.Grenade)}
+        };
+        private bool _isFiring;
+
+        private Player _player;
+        [SerializeField] protected TypeOfWeapon _weaponType;
+
+        public TypeOfWeapon WeaponType
+        {
+            get => _weaponType;
         }
 
-        protected virtual void Awake()
+        public WeaponBack EquipedWeapon { get; private set; }
+        public Func<bool> AdditionalConditions { get; set; } = null;
+        public virtual bool CanDamage => AdditionalConditions==null?_isFiring:_isFiring && AdditionalConditions();
+
+        public WeaponInGameObject WeaponGameObject => this;
+
+        public int GetAmmo => _player.GetAmountOfAmmo();
+        public Vector3 СursorPosition => _player.CursorPosistion;
+        public virtual void StartFiring(bool isFiring)
         {
-            _weapons = CreateDict();
-            
-            Dictionary<string, WeaponBack> CreateDict()
-            {
-                var dict = new Dictionary<string, WeaponBack>();
-                var weapon=WeaponBack.CreateInstance("MachineGun");
-                dict.Add(weapon.Name,weapon);
-                return dict;
-            }
+            _isFiring = isFiring;
+        }
+
+        public virtual void Awake()
+        {
+            _player = GetComponentInParent<Player>(true);
         }
         
-        public void SetWeapon(string nameOfWeapon)
+        public void SetWeapon(WeaponName nameOfWeapon)
         {
             if (!_weapons.Keys.Contains(nameOfWeapon))
                 throw new KeyNotFoundException($"No weapon with this name {nameOfWeapon}");
-            CurrentWeapon= _weapons[nameOfWeapon];
+            EquipedWeapon= _weapons[nameOfWeapon];
+            
         }
 
-        public static WeaponBack GetWeaponBack(string nameOfWeapon)
+        public static WeaponBack GetWeaponBack(WeaponName nameOfWeapon)
         {
             if (!_weapons.Keys.Contains(nameOfWeapon))
                 throw new KeyNotFoundException($"No weapon with this name {nameOfWeapon}");
             return _weapons[nameOfWeapon];
+        }
+
+        public void ApplyDamage(Destructable destructable)
+        {
+            EquipedWeapon.ApplyDamage(destructable);
+            if (EquipedWeapon is not ILimitedAmmo) return;
+            _player.ReduceAmmo(EquipedWeapon);
         }
         
     }

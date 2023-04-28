@@ -1,4 +1,4 @@
-namespace Resources.Scripts
+namespace LaninCode
 {
     public enum TypeOfCursor
     {

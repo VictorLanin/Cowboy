@@ -32,20 +32,20 @@ namespace LaninCode
         private void OnTriggerEnter2D(Collider2D col)
         {
             if(!_checker.CheckForAppropriateTag(col.tag)) return;
-             _weaponInGameObject = GameManager.GetCursor(TypeOfCursor.Player,col.gameObject.GetInstanceID());
+             _weaponInGameObject = PlayerCursor.GetWeaponInGameObject(col.name);
              StartCoroutine(CheckForDamage());
         }
 
         //todo потом удалить изменение цветов
         public IEnumerator CheckForDamage()
         {
-            var weapon=_weaponInGameObject.CurrentWeapon;
-            Debug.Log("dasdasda");
+            var weapon=_weaponInGameObject.EquipedWeapon;
             while (Health>0)
             {
                 if (_weaponInGameObject.CanDamage)
                 {
-                    weapon.ApplyDamage(this);
+                    Debug.Log("asdasd");
+                    _weaponInGameObject.ApplyDamage(this);
                     _renderer.color=Color.red;
                     yield return (weapon is IDelay delayable)? new WaitForSeconds(delayable.Delay) : null;
                 }
