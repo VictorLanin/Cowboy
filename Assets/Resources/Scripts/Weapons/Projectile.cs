@@ -8,7 +8,7 @@ namespace LaninCode
     [RequireComponent(typeof(Animator))]
     public class Projectile : Poolable,IGetWeapon
     {
-        [SerializeField] private string nameOfProjectile;
+        [SerializeField] private WeaponName nameOfProjectile;
         private Collider2D _collider2D;
         private SpriteRenderer _renderer;
         private Animator _anim;
@@ -18,7 +18,6 @@ namespace LaninCode
             _collider2D = GetComponent<Collider2D>();
             _renderer = GetComponent<SpriteRenderer>();
             _anim = GetComponent<Animator>();
-            name = nameOfProjectile;
         }
         
         /// <summary>
@@ -49,7 +48,7 @@ namespace LaninCode
             _renderer.enabled=onOff == OnOff.On;
             _anim.StopPlayback();
         }
-        public override string Name => nameOfProjectile;
+        public override string Name => nameOfProjectile.ToString();
 
         public WeaponInGameObject WeaponGameObject { get; set; } = null;
         

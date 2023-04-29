@@ -39,13 +39,12 @@ namespace LaninCode
         //todo потом удалить изменение цветов
         public IEnumerator CheckForDamage()
         {
-            var weapon=_weaponInGameObject.EquipedWeapon;
+            var weapon=_weaponInGameObject.EquippedWeapon;
             while (Health>0)
             {
-                if (_weaponInGameObject.CanDamage)
+                if (weapon.CanDamage)
                 {
-                    Debug.Log("asdasd");
-                    _weaponInGameObject.ApplyDamage(this);
+                    weapon.ApplyDamage(this);
                     _renderer.color=Color.red;
                     yield return (weapon is IDelay delayable)? new WaitForSeconds(delayable.Delay) : null;
                 }
@@ -78,6 +77,7 @@ namespace LaninCode
             _curHealth = posDamage <= 0 ? 0 : posDamage;
             _destructee.SetHealth(_curHealth);
         }
+        
     }
     
 }

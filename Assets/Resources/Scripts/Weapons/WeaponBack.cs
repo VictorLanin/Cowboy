@@ -11,7 +11,9 @@
             Name = name;
             Damage = damage;
         }
-        
+
+        public abstract bool CanDamage { get;  }
+
         public static WeaponBack CreateInstance(WeaponName name)
         {
             WeaponBack weapon;
@@ -19,7 +21,7 @@
             {
                 case WeaponName.Grenade:
                 {
-                    weapon = new GrenadeBack(WeaponName.Grenade, 20, 10, 1, 5f);
+                    weapon = new GrenadeBack(WeaponName.Grenade, 20, 2, 10, 1,5f,5f);
                     break;
                 }
                 default: weapon=new MachineGunBack(WeaponName.MachineGun, 5,0.2f);
@@ -33,5 +35,6 @@
             destructable.GetDamage(Damage);
         }
 
+        public abstract void TryFiring(bool isFiring);
     }
 }

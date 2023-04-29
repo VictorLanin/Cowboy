@@ -1,68 +1,28 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LaninCode
 {
     public class ProjectileWeapon : WeaponInGameObject
     {
+        [SerializeField] private WeaponName weaponName;
         [SerializeField] private Projectile _projectile;
-
         private ProjectileInstancer _instancer;
-        public bool CanInstantiate => _instancer.CanInstantiate;
         public Func<Vector3> GetPosition { get; set; }
-        
-        public override void Awake()
+
+        public WeaponName NameOfWeapon => weaponName;
+
+        public void Awake()
         {
-            base.Awake();
-            _instancer = ProjectileInstancer.CreateInstance(_projectile.name, 5);
             _projectile.WeaponGameObject = this;
         }
-        public override void StartFiring(bool isFiring)
+        public void InstantiateProjectile()
         {
-            base.StartFiring(isFiring);
-            if (!isFiring) return;
-            InstantiateProjectile();
-            void InstantiateProjectile()
-            {
-                if(!_instancer.CanInstantiate) return;
-                StartCoroutine(_instancer.Delay());
-               var proj= Instantiate(_projectile.gameObject);
-               var projScr = proj.GetComponent<Projectile>(); 
-               projScr.MoveToTarget(GetPosition());
-            }
+            var proj= Instantiate(_projectile.gameObject);
+            var projScr = proj.GetComponent<Projectile>(); 
+            projScr.MoveToTarget(GetPosition());
         }
-        
-        private class ProjectileInstancer
-        {
-            public bool CanInstantiate { get; private set; }
-        
-            private ProjectileInstancer(string nameOfProjectile, int delayToInstantiate)
-            {
-                NameOfProjectile = nameOfProjectile;
-                DelayToInstantiate = delayToInstantiate;
-                CanInstantiate = true;
-            }
-
-            public static ProjectileInstancer CreateInstance(string nameOfProjectile, int delayToInstantiate)
-            {
-                return new ProjectileInstancer(nameOfProjectile, delayToInstantiate);
-            }
-        
-            public string NameOfProjectile { get; }
-            public int DelayToInstantiate { get; }
-
-            public IEnumerator Delay()
-            {
-                CanInstantiate = false;
-                for (int i = DelayToInstantiate; i > 0; i--)
-                {
-                    yield return new WaitForSeconds(0.1f);
-                }
-                CanInstantiate = true;
-            } 
-        }
-
-        public override bool CanDamage { get; } = true;
     }
 }

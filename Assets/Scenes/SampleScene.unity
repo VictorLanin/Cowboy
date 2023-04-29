@@ -542,7 +542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f52683f05ae64def80916161c755a178, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _weaponType: 0
+  weaponType: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1365,7 +1365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f57d6b610124f9ab5e3a830466a065d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _weaponType: 1
+  weaponType: 1
   _projectile: {fileID: 657638305981207317, guid: b1536c58facdad46aaea55c998ed66ab, type: 3}
 --- !u!1 &1233734449
 GameObject:

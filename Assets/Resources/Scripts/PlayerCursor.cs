@@ -65,10 +65,11 @@ namespace LaninCode
             _horAxis = Input.GetAxis("Shoot Hor");
             _verAxis = Input.GetAxis("Shoot Ver");
             _rbody.velocity = new Vector2(_horAxis,_verAxis)*_speed;
-            var fired = Input.GetButton("Fire1");
-            SelectedWeaponGameObject.StartFiring(fired);
-            _lineRenderer.enabled = SelectedWeaponGameObject.CanDamage;
-            if (!SelectedWeaponGameObject.CanDamage) return;
+            var isFiring = Input.GetButton("Fire1");
+            SelectedWeaponGameObject.EquippedWeapon.TryFiring(isFiring);
+            //SelectedWeaponGameObject.TryFiring(fired);
+            _lineRenderer.enabled = isFiring;
+            if (!isFiring) return;
             UpdateLineRenderer();
             void UpdateLineRenderer()
             {
@@ -94,12 +95,12 @@ namespace LaninCode
                     throw new ArgumentOutOfRangeException(nameof(weaponName), weaponName, null);
             }
             SelectedWeaponGameObject.SetWeapon(weaponName);
-            name = weaponName.ToString();
         }
 
+        //todo удалить 
         public static WeaponInGameObject GetWeaponInGameObject(string nameOfCursor)
         {
-            return nameOfCursor == "MachineGun"
+            return nameOfCursor == "Cursor"
                 ? _availableWeapons[WeaponInGameObject.TypeOfWeapon.CursorBased]
                 : _availableWeapons[WeaponInGameObject.TypeOfWeapon.ProjectileBased];
         }

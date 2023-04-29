@@ -87,12 +87,13 @@ namespace LaninCode
         
         public int GetAmountOfAmmo()
         {
-            if (_playerCursor == null) return -1;
-            var weaponName = _playerCursor.SelectedWeaponGameObject.EquipedWeapon.Name;
-            var ammoAmount = _playerCursor.SelectedWeaponGameObject.EquipedWeapon is ILimitedAmmo
-                ? _currentAmmoSupply[weaponName]
-                : -1;
-            return ammoAmount;
+            // if (_playerCursor == null) return -1;
+            // var weaponName = _playerCursor.SelectedWeaponGameObject.EquippedWeapon.Name;
+            // var ammoAmount = _playerCursor.SelectedWeaponGameObject.EquippedWeapon is ILimitedAmmo
+            //     ? _currentAmmoSupply[weaponName]
+            //     : -1;
+            // return ammoAmount;
+            return -1;
         }
 
         public Vector3 CursorPosistion => _playerCursor.transform.position;
