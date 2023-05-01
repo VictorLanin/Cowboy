@@ -4,6 +4,6 @@ namespace LaninCode
     {
         public int MaxAmmo { get; }
         public int ReduceAmmoRate { get; } 
-        public int AvailableAmmo { get; set; }
+        public int AvailableAmmo { get; set; } 
     }
 }

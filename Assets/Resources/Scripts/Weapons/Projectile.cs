@@ -1,12 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace LaninCode
 {
     [RequireComponent(typeof(Collider2D))]
     [RequireComponent(typeof(Animator))]
-    public class Projectile : Poolable,IGetWeapon
+    public class Projectile : Poolable
     {
         [SerializeField] private WeaponName nameOfProjectile;
         private Collider2D _collider2D;
@@ -50,7 +49,5 @@ namespace LaninCode
         }
         public override string Name => nameOfProjectile.ToString();
 
-        public WeaponInGameObject WeaponGameObject { get; set; } = null;
-        
     }
 }

@@ -21,7 +21,7 @@
             {
                 case WeaponName.Grenade:
                 {
-                    weapon = new GrenadeBack(WeaponName.Grenade, 20, 2, 10, 1,5f,5f);
+                    weapon = new GrenadeBack(WeaponName.Grenade, 20, 2, 10, 1,5f,2f);
                     break;
                 }
                 default: weapon=new MachineGunBack(WeaponName.MachineGun, 5,0.2f);
@@ -34,7 +34,6 @@
         {
             destructable.GetDamage(Damage);
         }
-
         public abstract void TryFiring(bool isFiring);
     }
 }

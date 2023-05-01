@@ -9,11 +9,11 @@ namespace LaninCode
     public class Destructable :MonoBehaviour
     {
         [SerializeField] private string _tagOfWeapon = "PlayerWeapon";
-        private WeaponInGameObject _weaponInGameObject;
         protected SpriteRenderer _renderer;
         private Collider2D _collider;
         [SerializeField] private float _maxHealth=100;
         private float _curHealth;
+        private WeaponBack _weapon;
         
         public float Health
         {
@@ -29,24 +29,24 @@ namespace LaninCode
             _curHealth = _maxHealth;
         }
         
+        //todo поменять тут код на 
         private void OnTriggerEnter2D(Collider2D col)
         {
             if(!_checker.CheckForAppropriateTag(col.tag)) return;
-             _weaponInGameObject = PlayerCursor.GetWeaponInGameObject(col.name);
+            _weapon = Player.GetWeapon(col.name);
              StartCoroutine(CheckForDamage());
         }
 
         //todo потом удалить изменение цветов
         public IEnumerator CheckForDamage()
         {
-            var weapon=_weaponInGameObject.EquippedWeapon;
             while (Health>0)
             {
-                if (weapon.CanDamage)
+                if (_weapon.CanDamage)
                 {
-                    weapon.ApplyDamage(this);
+                    _weapon.ApplyDamage(this);
                     _renderer.color=Color.red;
-                    yield return (weapon is IDelay delayable)? new WaitForSeconds(delayable.Delay) : null;
+                    yield return (_weapon is IDelay delayable)? new WaitForSeconds(delayable.Delay) : null;
                 }
                 _renderer.color = Color.white;
                 yield return null;
