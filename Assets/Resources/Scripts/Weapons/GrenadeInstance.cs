@@ -1,25 +1,27 @@
 
 namespace LaninCode
 {
-    public class GrenadeBack : WeaponBack,ILimitedAmmo,IProjectile
+    public class GrenadeInstance : Weapon,ILimitedAmmo,IProjectile
     {
         private int _availableAmmo;
         private ProjectileInstancer _instancer;
-        public GrenadeBack(WeaponName name, int damage, int availableAmmo, int maxAmmo, int reduceAmmoRate, float speedOfProjectile, float delayToInstantiate) : base(name, damage)
+        public GrenadeInstance()
         {
-            _availableAmmo = availableAmmo;
-            _instancer = ProjectileInstancer.CreateInstance(delayToInstantiate);
-            MaxAmmo = maxAmmo;
-            ReduceAmmoRate = reduceAmmoRate;
-            SpeedOfProjectile = speedOfProjectile;
-            DelayToInstantiate = delayToInstantiate;
+            _availableAmmo = Grenade.InitialAmmo;
+            _instancer = ProjectileInstancer.CreateInstance(DelayToInstantiate);
         }
 
-        public int MaxAmmo { get; }
-        public int ReduceAmmoRate { get; }
-        public float SpeedOfProjectile { get; }
-        public float DelayToInstantiate { get; }
+        public int MaxAmmo => Grenade.MaxAmmo;
+        public int ReduceAmmoRate => Grenade.ReduceAmmoRate;
+        public float SpeedOfProjectile => Grenade.SpeedOfProjectile;
+        public float DelayToInstantiate => Grenade.DelayToInstantiate;
+        public override WeaponName Name => WeaponName.Grenade;
+        public override int Damage => Grenade.Damage;
+        public override bool CanDamage => true;
 
+        private bool _isFiring;
+        
+        public ProjectileInstancer Instancer => _instancer;
         public int AvailableAmmo
         {
             get => _availableAmmo;
@@ -50,12 +52,7 @@ namespace LaninCode
         {
            _isFiring=isFiring;
         }
-
-        public override bool CanDamage { get; } = true;
-
-        private bool _isFiring;
         
-        public ProjectileInstancer Instancer => _instancer;
         public bool CanInstantiate => _isFiring && AvailableAmmo > 0 && _instancer.CanInstantiate;
     }
 

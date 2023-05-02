@@ -26,9 +26,9 @@ namespace LaninCode
         private ProjectileManager _projectileManager;
         public void Awake()
         {
+            _playerCursor = GetComponentInChildren<PlayerCursor>(true);
             _projectileManager = GetComponent<ProjectileManager>();
             _projectileManager.GetPosition += () => CursorPosistion;
-            _playerCursor = GetComponentInChildren<PlayerCursor>(true);
             AddToPlayers();
             _rbody = GetComponent<Rigidbody2D>();
             _destructable = GetComponent<Destructable>();
@@ -96,15 +96,15 @@ namespace LaninCode
 
         public Vector3 CursorPosistion => _playerCursor.transform.position;
 
-        private readonly Dictionary<WeaponName, WeaponBack> _weapons = new()
+        private readonly Dictionary<WeaponName, Weapon> _weapons = new()
         {
-            { WeaponName.MachineGun, WeaponBack.CreateInstance(WeaponName.MachineGun) },
-            { WeaponName.Grenade, WeaponBack.CreateInstance(WeaponName.Grenade) }
+            { WeaponName.MachineGun, Weapon.CreateInstance(WeaponName.MachineGun) },
+            { WeaponName.Grenade, Weapon.CreateInstance(WeaponName.Grenade) }
         };
 
-        private WeaponBack _selectedWeapon;
+        private Weapon _selectedWeapon;
 
-        public WeaponBack GetWeaponBack(WeaponName nameOfWeapon)
+        public Weapon GetWeaponBack(WeaponName nameOfWeapon)
         {
             if (!_weapons.ContainsKey(nameOfWeapon))
                 throw new KeyNotFoundException($"No weapon with this name {nameOfWeapon}");
@@ -121,6 +121,7 @@ namespace LaninCode
         {
             _selectedWeapon = _weapons[weaponSelected];
             _playerCursor.gameObject.name = name + ' ' + weaponSelected;
+            _playerCursor.CursorCollider.enabled = _selectedWeapon is not ILimitedAmmo;
         }
 
         public void GetPrevious()
@@ -131,7 +132,7 @@ namespace LaninCode
 
         private static Dictionary<string, Player> _playersAvailable = new(4);
 
-        public static WeaponBack GetWeapon(string colName)
+        public static Weapon GetWeapon(string colName)
         {
             var keys = colName.Split(' ');
             var playerName = keys[0];

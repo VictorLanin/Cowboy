@@ -13,7 +13,7 @@ namespace LaninCode
         private Collider2D _collider;
         [SerializeField] private float _maxHealth=100;
         private float _curHealth;
-        private WeaponBack _weapon;
+        private Weapon _weapon;
         
         public float Health
         {
@@ -46,7 +46,7 @@ namespace LaninCode
                 {
                     _weapon.ApplyDamage(this);
                     _renderer.color=Color.red;
-                    yield return (_weapon is IDelay delayable)? new WaitForSeconds(delayable.Delay) : null;
+                    yield return (_weapon is IDamageDelay delayable)? new WaitForSeconds(delayable.DamageDelay) : null;
                 }
                 _renderer.color = Color.white;
                 yield return null;

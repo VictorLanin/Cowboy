@@ -17,13 +17,15 @@ namespace LaninCode
         private float _speed = 5f;
         private Collider2D _collider;
 
+        public Collider2D CursorCollider => _collider;
+
         public void Awake()
         {
             _player = GetComponentInParent<Player>();
-            _player.Awake();
             _lineRenderer = GetComponent<LineRenderer>();
             _rbody = GetComponent<Rigidbody2D>();
             _collider = GetComponent<Collider2D>();
+            _player.Awake();
         }
         
         private void Update()
@@ -42,6 +44,7 @@ namespace LaninCode
                 _lineRenderer.SetPosition(1,transform.position);
             }
         }
+        
         
     }
 }   
