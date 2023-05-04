@@ -4,25 +4,25 @@ using UnityEngine.Pool;
 
 namespace LaninCode
 {
-    [RequireComponent(typeof(Destructable))]
+    [RequireComponent(typeof(Destructible))]
     public class Enemy : Poolable,IOnDamage
     {
         [SerializeField] string _nameOfEnemy;
-        private Destructable _destructable;
+        private Destructible _destructible;
         private Animator _animator;
         private int _health;
 
         private void Awake()
         {
-            _destructable=GetComponent<Destructable>();
+            _destructible=GetComponent<Destructible>();
             _animator = GetComponent<Animator>();
-            _destructable.SetDestructee(this);
+            _destructible.SetDestructee(this);
             _health=Animator.StringToHash("Health");
         }
         
         public override void Activate(OnOff onOff)
         {
-            _destructable.Activate(onOff);
+            _destructible.Activate(onOff);
         }
 
         public override string Name => _nameOfEnemy;
@@ -36,8 +36,8 @@ namespace LaninCode
         {
             Activate(OnOff.Off);
             //ObjectPoolsManager.Release(this);
-            _animator.SetFloat(_health,_destructable.Health);
-            _animator.enabled = false;
+            _animator.SetFloat(_health,_destructible.HealthRelatToMaxHealth);
+            _animator.StopPlayback();
         }
     }
 }

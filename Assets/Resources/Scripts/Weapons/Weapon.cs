@@ -23,9 +23,9 @@
             return weapon;
         }
 
-        public virtual void ApplyDamage(Destructable destructable)
+        public virtual void ApplyDamage(Destructible destructible)
         {
-            destructable.GetDamage(Damage);
+            destructible.GetDamage(Damage);
         }
         public abstract void TryFiring(bool isFiring);
     }

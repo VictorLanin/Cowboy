@@ -8,20 +8,20 @@ namespace LaninCode
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
-    [RequireComponent(typeof(Destructable))]
+    [RequireComponent(typeof(Destructible))]
     [RequireComponent(typeof(ProjectileManager))]
     public class Player : MonoBehaviour, IOnDamage
     {
         private const float _speed = 10f;
         private Rigidbody2D _rbody;
         private float _horAxis;
-        private Destructable _destructable;
+        private Destructible _destructible;
         private bool _isJumping;
         private PlayerCursor _playerCursor;
 
         private LinkedList<WeaponName> _namesOfWeapons = new(new[] { WeaponName.MachineGun, WeaponName.Grenade });
         private LinkedListNode<WeaponName> _weaponSelected;
-        public WeaponName WeaponSelected => _weaponSelected!= null ? _weapons[_weaponSelected.Value].Name : _weapons[WeaponName.MachineGun].Name;
+        public WeaponName WeaponSelected => _weaponSelected!= null ? Weapons[_weaponSelected.Value].Name : Weapons[WeaponName.MachineGun].Name;
 
         private ProjectileManager _projectileManager;
         public void Awake()
@@ -31,8 +31,8 @@ namespace LaninCode
             _projectileManager.GetPosition += () => CursorPosistion;
             AddToPlayers();
             _rbody = GetComponent<Rigidbody2D>();
-            _destructable = GetComponent<Destructable>();
-            _destructable.SetDestructee(this);
+            _destructible = GetComponent<Destructible>();
+            _destructible.SetDestructee(this);
             _weaponSelected = _namesOfWeapons.First;
             SetWeapon(_weaponSelected.Value);
 
@@ -79,7 +79,7 @@ namespace LaninCode
 
         public void SetHealth(float health)
         {
-            if (_destructable.Health > 0) return;
+            
             Debug.Log("Game over!");
         }
 
@@ -96,7 +96,7 @@ namespace LaninCode
 
         public Vector3 CursorPosistion => _playerCursor.transform.position;
 
-        private readonly Dictionary<WeaponName, Weapon> _weapons = new()
+        private static readonly Dictionary<WeaponName, Weapon> Weapons = new()
         {
             { WeaponName.MachineGun, Weapon.CreateInstance(WeaponName.MachineGun) },
             { WeaponName.Grenade, Weapon.CreateInstance(WeaponName.Grenade) }
@@ -106,9 +106,9 @@ namespace LaninCode
 
         public Weapon GetWeaponBack(WeaponName nameOfWeapon)
         {
-            if (!_weapons.ContainsKey(nameOfWeapon))
+            if (!Weapons.ContainsKey(nameOfWeapon))
                 throw new KeyNotFoundException($"No weapon with this name {nameOfWeapon}");
-            return _weapons[nameOfWeapon];
+            return Weapons[nameOfWeapon];
         }
 
         public void GetNext()
@@ -119,9 +119,9 @@ namespace LaninCode
 
         private void SetWeapon(WeaponName weaponSelected)
         {
-            _selectedWeapon = _weapons[weaponSelected];
+            _selectedWeapon = Weapons[weaponSelected];
             _playerCursor.gameObject.name = name + ' ' + weaponSelected;
-            _playerCursor.CursorCollider.enabled = _selectedWeapon is not ILimitedAmmo;
+            //_playerCursor.CursorCollider.enabled = _selectedWeapon is not ILimitedAmmo;
         }
 
         public void GetPrevious()
@@ -132,7 +132,13 @@ namespace LaninCode
 
         private static Dictionary<string, Player> _playersAvailable = new(4);
 
-        public static Weapon GetWeapon(string colName)
+        public static Player GetPlayer(string playerID)
+        {
+            if (!_playersAvailable.ContainsKey(playerID)) throw new KeyNotFoundException($"no {playerID} in players");
+            return _playersAvailable[playerID];
+        } 
+
+        public static Weapon GetDamagingWeapon(string colName)
         {
             var keys = colName.Split(' ');
             var playerName = keys[0];
@@ -142,10 +148,15 @@ namespace LaninCode
 
         public void TryFiring(bool isFiring)
         {
-            var weapon=_weapons[WeaponSelected];
+            var weapon=Weapons[WeaponSelected];
             weapon.TryFiring(isFiring);
             if (weapon is not IProjectile projectileWeapon) return;
             _projectileManager.InstantiateProjectile(projectileWeapon);
+        }
+
+        public void AddHealth(float health)
+        {
+            _destructible.CurrentHealth += health;
         }
     }
 }

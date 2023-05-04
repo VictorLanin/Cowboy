@@ -15,7 +15,7 @@ namespace LaninCode
             var proj= Instantiate(_projectile.gameObject);
             proj.name = "PlayerOne " + _projectile.Name;
             var projScr = proj.GetComponent<Projectile>(); 
-            projScr.MoveToTarget(GetPosition());
+            projScr.MoveToTarget(GetPosition(),projectileWeapon.SpeedOfProjectile);
         }
     }
 }

@@ -21,10 +21,10 @@ namespace LaninCode
 
         public void Awake()
         {
-            _player = GetComponentInParent<Player>();
-            _lineRenderer = GetComponent<LineRenderer>();
             _rbody = GetComponent<Rigidbody2D>();
             _collider = GetComponent<Collider2D>();
+            _player = GetComponentInParent<Player>();
+            _lineRenderer = GetComponent<LineRenderer>();
             _player.Awake();
         }
         

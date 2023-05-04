@@ -11,31 +11,31 @@ namespace LaninCode
         private Collider2D _collider2D;
         private SpriteRenderer _renderer;
         private Animator _anim;
-        private float _speed = 2f;
         private void Awake()
         {
             _collider2D = GetComponent<Collider2D>();
             _renderer = GetComponent<SpriteRenderer>();
             _anim = GetComponent<Animator>();
         }
-        
+
         /// <summary>
         /// Coroutine for projectile movement
         /// </summary>
         /// <param name="destination"> location go to </param>
-        public void MoveToTarget(Vector3 destination)
+        /// <param name="speed">speed of projectile</param>
+        public void MoveToTarget(Vector3 destination, float speed)
         {
-            StartCoroutine(MoveTo(destination));
-        }
-
-        private IEnumerator MoveTo(Vector3 destination)
-        {
-            while (!transform.position.Equals(destination))
+            StartCoroutine(MoveTo(destination,speed));
+            
+            IEnumerator MoveTo(Vector3 destination, float speed)
             {
-                transform.position = Vector3.MoveTowards(transform.position, destination, _speed * Time.deltaTime);
-                yield return null;
+                while (!transform.position.Equals(destination))
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, destination,  speed* Time.deltaTime);
+                    yield return null;
+                }
+                _anim.SetTrigger("BlowUp");
             }
-            _anim.SetTrigger("BlowUp");
         }
         /// <summary>
         /// "Turns" On-Off specific gameobject without disabling it off completely 
