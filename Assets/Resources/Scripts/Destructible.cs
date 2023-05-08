@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace LaninCode
 {
@@ -9,45 +10,45 @@ namespace LaninCode
         [SerializeField] private string _tagOfWeapon = "PlayerWeapon";
         private SpriteRenderer _renderer;
         private Collider2D _collider;
-        [SerializeField] private float _maxHealth=100;
-        private float _currentHealth;
+        [SerializeField] private int maxHealth;
+        [SerializeField] private int currentHealth;
         private Weapon _weapon;
         
         public float HealthRelatToMaxHealth
         {
-            get => _currentHealth/_maxHealth;
+            get => currentHealth/maxHealth;
         }
 
         public CollisionChecker Checker => _checker;
 
-        public float CurrentHealth
+        public int CurrentHealth
         {
-            get => _currentHealth;
+            get => currentHealth;
             set
             {
-                if (value <= 0)
+                currentHealth = value;
+                if (currentHealth <= 0)
                 {
-                    _currentHealth = 0;
+                    currentHealth = 0;
                     return;
                 }
-
-                if (value >= _maxHealth)
+                if (currentHealth > maxHealth)
                 {
-                    _currentHealth = _maxHealth;
-                    return;
+                    currentHealth = maxHealth;
                 }
-                _currentHealth = value;
             }
         }
+
+        public int MaxHealth => maxHealth;
 
         private IOnDamage _destructee = null;
         private CollisionChecker _checker;
         public void Awake()
         {
+            CurrentHealth = maxHealth;
             _checker=CollisionChecker.CreateInstance(new List<string>(){_tagOfWeapon});
             _renderer = GetComponent<SpriteRenderer>();
             _collider = GetComponent<Collider2D>();
-            _currentHealth = _maxHealth;
         }
         
         private void OnTriggerEnter2D(Collider2D col)
@@ -60,7 +61,7 @@ namespace LaninCode
         //todo потом удалить изменение цветов
         public IEnumerator CheckForDamage()
         {
-            while (HealthRelatToMaxHealth>0)
+            while (currentHealth>0)
             {
                 if (_weapon.CanDamage)
                 {
@@ -81,7 +82,7 @@ namespace LaninCode
 
         public void Activate(OnOff onOff)
         {
-            _currentHealth =_maxHealth;
+            currentHealth =maxHealth;
             _collider.enabled = onOff == OnOff.On;
             _renderer.enabled = onOff == OnOff.On;
         }
@@ -91,9 +92,9 @@ namespace LaninCode
             _destructee = destr;
         }
 
-        public void GetDamage(float damage)
+        public void GetDamage(int damage)
         {
-            _destructee.SetHealth( CurrentHealth -= damage);
+            _destructee.SetHealth( currentHealth -= damage);
         }
 
         public void SetSprite(Sprite spr)

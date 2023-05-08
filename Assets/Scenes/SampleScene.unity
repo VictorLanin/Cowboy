@@ -980,7 +980,7 @@ MonoBehaviour:
   thumb: {fileID: 0}
   mBG: {fileID: 0}
   mFG: {fileID: 0}
-  mValue: 0
+  mValue: 1
   mFill: 0
   numberOfSteps: 0
   onChange: []
@@ -1509,6 +1509,14 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: b6c48e86775243d81997ef5c9604b43e, type: 2}
+    - target: {fileID: 2487782065350720807, guid: 5715a2c25d1558685b6b7c60472f5939, type: 3}
+      propertyPath: maxHealth
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2487782065350720807, guid: 5715a2c25d1558685b6b7c60472f5939, type: 3}
+      propertyPath: currentHealth
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 2487782065350720857, guid: 5715a2c25d1558685b6b7c60472f5939, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -1663,7 +1671,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tagOfWeapon: PlayerWeapon
-  _maxHealth: 20
+  maxHealth: 20
+  currentHealth: 20
 --- !u!1001 &8819356290848245148
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1718,10 +1727,6 @@ PrefabInstance:
     - target: {fileID: 8819356289784345363, guid: 04bc28279dc0733b98d2a2c1bbea27a4, type: 3}
       propertyPath: m_Name
       value: PlayerOne
-      objectReference: {fileID: 0}
-    - target: {fileID: 8819356291030436100, guid: 04bc28279dc0733b98d2a2c1bbea27a4, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04bc28279dc0733b98d2a2c1bbea27a4, type: 3}

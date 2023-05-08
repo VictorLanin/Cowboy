@@ -21,11 +21,14 @@ namespace LaninCode
             _rbody2d = GetComponent<Rigidbody2D>();
         }
 
-        public void SetHealth(float health)
+        public void SetHealth(int health)
         {
-            _anim.SetFloat("Health",health);
+            _anim.SetInteger("Health",health);
         }
-
+        
+        /// <summary>
+        /// Invoke PowerUp
+        /// </summary>
         public abstract void AddPowerUp();
         
         private void OnTriggerEnter2D(Collider2D other)
@@ -34,17 +37,17 @@ namespace LaninCode
             SetPlayerByName(other.name);
         }
 
+        /// <summary>
+        /// Get player by collided object name
+        /// </summary>
+        /// <param name="nameOfCol"> collider's name, first part of it is used to find player</param>
         public void SetPlayerByName(string nameOfCol)
-        {
-            PlayerToGetPowerUp=SetPlayer(nameOfCol);
-        }
-        private Player SetPlayer(string nameOfCol)
         {
             var indexOfDelim = nameOfCol.IndexOf(' ');
             var nameOfPlayer =nameOfCol[..indexOfDelim];
-            return Player.GetPlayer(nameOfPlayer);
+            PlayerToGetPowerUp=Player.GetPlayer(nameOfPlayer);
         }
-        
+ 
         public static Sprite LoadSprite(string endingOfFile)
         {
             var spr = UnityEngine.Resources.Load<Sprite>($"Sprites/PowerUps/{endingOfFile}");

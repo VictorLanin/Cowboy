@@ -27,16 +27,16 @@ namespace LaninCode
 
         public override string Name => _nameOfEnemy;
         
-        public void SetHealth(float health)
+        public void SetHealth(int health)
         {
-            _animator.SetFloat(_health,health);
+            _animator.SetInteger(_health,health);
         }
 
         public void BackToPool()
         {
             Activate(OnOff.Off);
             //ObjectPoolsManager.Release(this);
-            _animator.SetFloat(_health,_destructible.HealthRelatToMaxHealth);
+            _animator.SetInteger(_health,_destructible.MaxHealth);
             _animator.StopPlayback();
         }
     }

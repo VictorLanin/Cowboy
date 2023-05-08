@@ -30,11 +30,13 @@ namespace LaninCode
         
         private void Update()
         {
+            var isFiring = Input.GetButton("Fire1");
+            _player.TryFiring(isFiring);
+            if (!isFiring) return;
             _horAxis = Input.GetAxis("Shoot Hor");
             _verAxis = Input.GetAxis("Shoot Ver");
             _rbody.velocity = new Vector2(_horAxis,_verAxis)*_speed;
-            var isFiring = Input.GetButton("Fire1");
-            _player.TryFiring(isFiring);
+
             _lineRenderer.enabled = isFiring;
             if (!isFiring) return;
             UpdateLineRenderer();

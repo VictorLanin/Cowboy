@@ -24,6 +24,8 @@ namespace LaninCode
         public WeaponName WeaponSelected => _weaponSelected!= null ? Weapons[_weaponSelected.Value].Name : Weapons[WeaponName.MachineGun].Name;
 
         private ProjectileManager _projectileManager;
+
+        private bool _canMovePlayer=true;
         public void Awake()
         {
             _playerCursor = GetComponentInChildren<PlayerCursor>(true);
@@ -56,12 +58,13 @@ namespace LaninCode
                 Debug.Log("next");
                 GetNext();
             }
-
+            
             if (Input.GetButtonDown("Jump"))
             {
                 _isJumping = true;
             }
 
+            if(!_canMovePlayer) return;
             _horAxis = Input.GetAxis("MoveHorizontal");
             if (_horAxis == 0) return;
             if (_isJumping)
@@ -77,9 +80,8 @@ namespace LaninCode
         }
 
 
-        public void SetHealth(float health)
+        public void SetHealth(int health)
         {
-            
             Debug.Log("Game over!");
         }
 
@@ -148,15 +150,16 @@ namespace LaninCode
 
         public void TryFiring(bool isFiring)
         {
+            _canMovePlayer = !isFiring;
             var weapon=Weapons[WeaponSelected];
             weapon.TryFiring(isFiring);
             if (weapon is not IProjectile projectileWeapon) return;
             _projectileManager.InstantiateProjectile(projectileWeapon);
         }
 
-        public void AddHealth(float health)
+        public void AddHealth(int health)
         {
-            _destructible.CurrentHealth += health;
+            _destructible.CurrentHealth = _destructible.CurrentHealth + health;
         }
     }
-}
+} 

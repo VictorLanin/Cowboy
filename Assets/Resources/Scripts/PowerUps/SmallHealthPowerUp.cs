@@ -4,7 +4,7 @@ namespace LaninCode
 {
     public class SmallHealthPowerUp : PowerUp
     {
-        private const float HealthAddOn=20f;
+        private const int HealthAddOn=20;
         private const string SpriteName = "Small_Health";
         private static Sprite _healthSprite;
         public override void Awake()
