@@ -5,9 +5,9 @@ namespace LaninCode
 {
     [RequireComponent(typeof(Collider2D))]
     [RequireComponent(typeof(Animator))]
-    public class Projectile : Poolable
+    public class PlayerProjectile : Poolable
     {
-        [SerializeField] private WeaponName nameOfProjectile;
+        [SerializeField] private PlayerWeaponName nameOfProjectile;
         private Collider2D _collider2D;
         private SpriteRenderer _renderer;
         private Animator _anim;

@@ -12,7 +12,7 @@ namespace LaninCode
         private Collider2D _collider;
         [SerializeField] private int maxHealth;
         [SerializeField] private int currentHealth;
-        private Weapon _weapon;
+        private IWeapon _weapon;
         
         public float HealthRelatToMaxHealth
         {
@@ -54,7 +54,7 @@ namespace LaninCode
         private void OnTriggerEnter2D(Collider2D col)
         {
             if(!_checker.CheckForAppropriateTag(col.tag)) return;
-            _weapon = Player.GetDamagingWeapon(col.name);
+            _weapon = WeaponDataManager.GetWeapon(col.name);
              StartCoroutine(CheckForDamage());
         }
 
@@ -90,6 +90,7 @@ namespace LaninCode
         public void SetDestructee(IOnDamage destr)
         {
             _destructee = destr;
+            maxHealth = destr.MaxHealth;
         }
 
         public void GetDamage(int damage)

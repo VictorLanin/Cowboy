@@ -25,7 +25,9 @@ namespace LaninCode
         {
             _anim.SetInteger("Health",health);
         }
-        
+
+        public int MaxHealth { get; }
+
         /// <summary>
         /// Invoke PowerUp
         /// </summary>

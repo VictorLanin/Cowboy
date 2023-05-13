@@ -11,7 +11,7 @@ namespace LaninCode
         
         public override void AddPowerUp()
         {
-            PlayerToGetPowerUp.AddAmmo(WeaponName.Grenade,AmountOfAmmo);
+            PlayerToGetPowerUp.AddAmmo(PlayerWeaponName.Grenade,AmountOfAmmo);
         }
         
         

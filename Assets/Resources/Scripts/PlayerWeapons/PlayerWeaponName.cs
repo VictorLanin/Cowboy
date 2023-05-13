@@ -1,6 +1,6 @@
 namespace LaninCode
 {
-    public enum WeaponName
+    public enum PlayerWeaponName
     {
         Grenade,MachineGun,
         Revolver

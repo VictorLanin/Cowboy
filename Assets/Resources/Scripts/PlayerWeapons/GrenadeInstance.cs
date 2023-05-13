@@ -1,7 +1,7 @@
 
 namespace LaninCode
 {
-    public class GrenadeInstance : Weapon,ILimitedAmmo,IProjectile
+    public class GrenadeInstance : PlayerWeapon,ILimitedAmmo,IProjectile
     {
         private const int WeaponMaxAmmo=10;
         private const int InitialAmmo=2;
@@ -14,7 +14,7 @@ namespace LaninCode
         public int MaxAmmo => WeaponMaxAmmo;
         public int ReduceAmmoRate => RedAmmoRate;
         public float SpeedOfProjectile => ProjSpeed;
-        public override WeaponName Name => WeaponName.Grenade;
+        public override PlayerWeaponName Name => PlayerWeaponName.Grenade;
         public override int Damage => WeaponDamage;
          
         public override bool CanDamage => true;

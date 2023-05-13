@@ -18,5 +18,7 @@ namespace LaninCode
         {
             _animator.SetInteger("Health",health);
         }
+
+        public int MaxHealth { get; }
     }
 }

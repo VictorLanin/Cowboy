@@ -2,7 +2,7 @@ using System;
 
 namespace LaninCode
 {
-    public class RevolverInstance : Weapon, ILimitedAmmo, IDamageDelay
+    public class RevolverInstance : PlayerWeapon, ILimitedAmmo, IDamageDelay
     {
         private bool _canDamage;
         private const float _damageDelay=3f;
@@ -12,7 +12,7 @@ namespace LaninCode
         private const int _initialAmmo = 10;
         private int _availableAmmo=_initialAmmo;
         
-        public override WeaponName Name => WeaponName.Revolver;
+        public override PlayerWeaponName Name => PlayerWeaponName.Revolver;
         public override int Damage => _damage;
         public override bool CanDamage => _canDamage;
         
