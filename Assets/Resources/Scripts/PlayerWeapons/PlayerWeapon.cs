@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-
+﻿
 namespace LaninCode
 {
     public abstract class PlayerWeapon:IWeapon

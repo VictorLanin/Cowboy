@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace LaninCode
 {
-    public class CollidedWeaponInstance : MonoBehaviour
+    public class CollidedWeaponGameObject : MonoBehaviour
     {
         [SerializeField] private CollidedWeapon collidedWeapon;
         private void Awake()
