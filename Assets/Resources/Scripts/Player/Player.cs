@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace LaninCode
@@ -62,18 +60,23 @@ namespace LaninCode
                 _isJumping = true;
             }
 
-            if(!_canMovePlayer) return;
-            _horAxis = Input.GetAxis("MoveHorizontal");
-            if (_horAxis == 0) return;
-            if (_isJumping)
+            if (_canMovePlayer)
             {
-                int translateIndex = (_horAxis > 0) ? 1 : -1;
-                _rbody.AddForce(Vector2.right * (translateIndex * _speed * 25f), ForceMode2D.Impulse);
-                _isJumping = false;
+                _horAxis = Input.GetAxis("Shoot Hor");
+                if (_isJumping)
+                {
+                    int translateIndex = (_horAxis > 0) ? 1 : -1;
+                    _rbody.AddForce(Vector2.right * (translateIndex * _speed * 25f), ForceMode2D.Impulse);
+                    _isJumping = false;
+                }
+                else
+                {
+                    _rbody.velocity = Vector2.right * (_speed * _horAxis);
+                }
             }
             else
             {
-                _rbody.velocity = Vector2.right * (_speed * _horAxis);
+                _rbody.velocity = Vector2.zero;
             }
         }
         
