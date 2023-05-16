@@ -7,11 +7,16 @@ namespace LaninCode
     [RequireComponent(typeof(Animator))]
     public class DestructableEnvironment : MonoBehaviour,IOnDamage
     {
+        [SerializeField] private int _maxHealth = 20;
         private Animator _animator;
+        private Destructible _destructible;
 
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+            _destructible = GetComponent<Destructible>();
+            _destructible.SetDestructee(this);
+            _animator.SetInteger("Health",_destructible.MaxHealth);
         }
 
         public void SetHealth(int health)
@@ -19,6 +24,13 @@ namespace LaninCode
             _animator.SetInteger("Health",health);
         }
 
-        public int MaxHealth { get; }
+        public void BackToPool()
+        {
+            _destructible.Activate(OnOff.Off);
+            //ObjectPoolsManager.Release(this);
+            _animator.SetInteger("Health",_destructible.MaxHealth);
+            _animator.StopPlayback();
+        }
+        public int MaxHealth => _maxHealth;
     }
 }

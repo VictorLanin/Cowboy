@@ -7,19 +7,19 @@ namespace LaninCode
         private bool _canDamage;
         private const float _damageDelay=3f;
         private const int _maxAmmo=20;
-        private const int _reduceAmmoRate=1;
-        private const int _damage=10;
-        private const int _initialAmmo = 10;
-        private int _availableAmmo=_initialAmmo;
+        private const int ReducedAmmoRate=1;
+        private const int InflictedDamage=10;
+        private const int InitialAmmo = 10;
+        private int _availableAmmo=InitialAmmo;
         
         public override PlayerWeaponName Name => PlayerWeaponName.Revolver;
-        public override int Damage => _damage;
+        public override int Damage => InflictedDamage;
         public override bool CanDamage => _canDamage;
         
         public float DamageDelay => _damageDelay;
 
         public int MaxAmmo => _maxAmmo;
-        public int ReduceAmmoRate =>_reduceAmmoRate;
+        public int ReduceAmmoRate =>ReducedAmmoRate;
 
         public int AvailableAmmo
         {
@@ -41,7 +41,8 @@ namespace LaninCode
             }
         }
 
-        public override void ApplyDamage(Destructible destructible)
+        
+        public override void  ApplyDamage(Destructible destructible)
         {
             base.ApplyDamage(destructible);
             AvailableAmmo -= ReduceAmmoRate;

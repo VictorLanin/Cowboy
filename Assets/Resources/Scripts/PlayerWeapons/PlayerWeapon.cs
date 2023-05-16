@@ -6,10 +6,6 @@ namespace LaninCode
         public abstract PlayerWeaponName Name { get; }
         public abstract int Damage { get; }
         public abstract bool CanDamage { get;  }
-        public IWeapon GetWeaponFromCollision(string nameOfCol)
-        {
-            return Player.GetDamagingWeapon(nameOfCol);
-        }
 
         public static PlayerWeapon CreateInstance(PlayerWeaponName name)
         {

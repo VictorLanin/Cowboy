@@ -40,11 +40,12 @@ namespace LaninCode
             }
         }
 
+
         public override void ApplyDamage(Destructible destructible)
-        {
+       {
             base.ApplyDamage(destructible);
             AvailableAmmo -= ReduceAmmoRate;
-        }
+       }
 
         public override void TryFiring(bool isFiring)
         {

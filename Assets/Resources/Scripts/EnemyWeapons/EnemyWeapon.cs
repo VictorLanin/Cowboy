@@ -8,14 +8,9 @@ namespace LaninCode
         public abstract EnemyWeaponName Name { get; }
         public abstract int Damage { get;}
         public abstract bool CanDamage { get; }
-        public IWeapon GetWeaponFromCollision(string nameOfCol)
-        {
-            return Enemy.GetWeapon(nameOfCol);
-        }
-
         public void ApplyDamage(Destructible destructible)
         {
-            destructible.CurrentHealth -= Damage;
+            destructible.GetDamage(Damage);
         }
 
         public static IWeapon CreateEnemyWeapon(EnemyWeaponName enemyWeaponName)

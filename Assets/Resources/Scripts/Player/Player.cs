@@ -78,11 +78,14 @@ namespace LaninCode
             {
                 _rbody.velocity = Vector2.zero;
             }
+            
+            
         }
         
         public void SetHealth(int health)
         {
-            Debug.Log("Game over!");
+            Debug.Log(health);
+            //Debug.Log("Game over!");
         }
 
         public int MaxHealth => _equippedMech.MaxHealth;

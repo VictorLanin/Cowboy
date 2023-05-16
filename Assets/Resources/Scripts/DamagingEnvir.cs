@@ -8,6 +8,10 @@ namespace LaninCode
         public abstract EnvironmentDamageName Name { get; }
         public abstract int Damage { get; }
         public abstract bool CanDamage { get; }
+        public void ApplyDamage(Destructible destructible)
+        {
+            destructible.GetDamage(Damage);
+        }
 
         public static IWeapon CreateEnvironment(EnvironmentDamageName environmentDamageName)
         {

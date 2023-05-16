@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace LaninCode
 {
     public class Destructible :MonoBehaviour
     {
-        [SerializeField] private string _tagOfWeapon = "PlayerWeapon";
+        [SerializeField] private List<string> _tagsOfWeapon;
         private SpriteRenderer _renderer;
         private Collider2D _collider;
         [SerializeField] private int maxHealth;
@@ -43,19 +42,20 @@ namespace LaninCode
 
         private IOnDamage _destructee = null;
         private CollisionChecker _checker;
+        private IEnumerator _cor;
         public void Awake()
         {
-            CurrentHealth = maxHealth;
-            _checker=CollisionChecker.CreateInstance(new List<string>(){_tagOfWeapon});
+            _checker=CollisionChecker.CreateInstance(_tagsOfWeapon);
             _renderer = GetComponent<SpriteRenderer>();
             _collider = GetComponent<Collider2D>();
+            _cor = CheckForDamage();
         }
         
         private void OnTriggerEnter2D(Collider2D col)
         {
             if(!_checker.CheckForAppropriateTag(col.tag)) return;
             _weapon = WeaponDataManager.GetWeapon(col.name);
-             StartCoroutine(CheckForDamage());
+             StartCoroutine(_cor);
         }
 
         //todo потом удалить изменение цветов
@@ -77,7 +77,7 @@ namespace LaninCode
         private void OnTriggerExit2D(Collider2D other)
         {
             if(!_checker.CheckForAppropriateTag(other.tag) ||  !_checker.IsObjectOutOfCollider(other)) return;
-            StopCoroutine(CheckForDamage());
+            StopCoroutine(_cor);
         }
 
         public void Activate(OnOff onOff)
@@ -91,11 +91,16 @@ namespace LaninCode
         {
             _destructee = destr;
             maxHealth = destr.MaxHealth;
+            currentHealth = maxHealth;
         }
 
+        /// <summary>
+        /// Invoke damage on destructable
+        /// </summary>
+        /// <param name="damage">amount of damage</param>
         public void GetDamage(int damage)
-        {
-            _destructee.SetHealth( currentHealth -= damage);
+        { 
+            _destructee.SetHealth(currentHealth -= damage);
         }
 
         public void SetSprite(Sprite spr)

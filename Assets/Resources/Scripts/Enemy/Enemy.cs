@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-
+//todo добавить энемибэк
 namespace LaninCode
 {
     [RequireComponent(typeof(Destructible))]
@@ -11,21 +12,20 @@ namespace LaninCode
     {
         private Destructible _destructible;
         private Animator _animator;
-        private int _health; 
         [SerializeField] string _nameOfEnemy;
-
-       [SerializeField] private List<EnemyWeaponName> availableWeaponNames;
-
-        private static Dictionary<EnemyWeaponName, EnemyWeapon> _enemyWeapons;
-        private EnemyWeapon _equippedWeapon;
         
+        //todo сделать орудия 
+
+        private IWeapon _equippedWeapon;
+
+        private EnemyData _enemyData;
         private void Awake()
         {
             _destructible=GetComponent<Destructible>();
             _animator = GetComponent<Animator>();
             _destructible.SetDestructee(this);
-            _health=Animator.StringToHash("Health");
-            _equippedWeapon = _enemyWeapons[availableWeaponNames[0]];
+            _enemyData = EnemyData.GetEnemyData(_nameOfEnemy);
+            _equippedWeapon = WeaponDataManager.EnemyWeapons[_enemyData.AvailableWeapons[0]];
         }
         
         public override void Activate(OnOff onOff)
@@ -37,23 +37,18 @@ namespace LaninCode
         
         public void SetHealth(int health)
         {
-            _animator.SetInteger(_health,health);
+            _animator.SetInteger("Health",health);
         }
 
-        public int MaxHealth { get; }
+        public int MaxHealth => _enemyData.MaxHealth;
 
         public void BackToPool()
         {
-            Activate(OnOff.Off);
-            //ObjectPoolsManager.Release(this);
-            _animator.SetInteger(_health,_destructible.MaxHealth);
+            Activate(OnOff.Off); 
+            ObjectPoolsManager.Release(this);
+            _animator.SetInteger("Health",_destructible.MaxHealth);
             _animator.StopPlayback();
         }
-
-        public static IWeapon GetWeapon(string nameOfCol)
-        {
-            var key = Enum.Parse<EnemyWeaponName>(nameOfCol);
-            return _enemyWeapons[key];
-        } 
+        
     }
 }
