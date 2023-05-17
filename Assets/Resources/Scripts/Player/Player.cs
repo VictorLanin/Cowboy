@@ -22,6 +22,8 @@ namespace LaninCode
         private ProjectileManager _projectileManager;
 
         private bool _canMovePlayer=true;
+        
+        
         public void Awake()
         {
             _equippedMech = new BasicMech();
@@ -33,7 +35,7 @@ namespace LaninCode
             _destructible = GetComponent<Destructible>();
             _destructible.SetDestructee(this);
             SetWeapon(_equippedMech.SelectedPlayerWeapon);
-
+            
             void AddToPlayers()
             {
                 if (_playersAvailable.ContainsKey(name)) return;
@@ -68,18 +70,28 @@ namespace LaninCode
                     int translateIndex = (_horAxis > 0) ? 1 : -1;
                     _rbody.AddForce(Vector2.right * (translateIndex * _speed * 25f), ForceMode2D.Impulse);
                     _isJumping = false;
+                    _rbody.velocity = Vector2.zero;
                 }
                 else
                 {
-                    _rbody.velocity = Vector2.right * (_speed * _horAxis);
+                    transform.Translate(Vector2.right * (_speed * _horAxis * Time.deltaTime));
                 }
             }
-            else
-            {
-                _rbody.velocity = Vector2.zero;
-            }
-            
-            
+
+                var cam = Camera.main;
+                var posOfPlayerOnScreen = cam.WorldToScreenPoint(transform.position);
+                float x = GetX();
+                Vector3 posPlayerPosition = new Vector3(x, posOfPlayerOnScreen.y, cam.nearClipPlane);
+                var pos = cam.ScreenToWorldPoint(posPlayerPosition);
+                transform.position = new Vector3(pos.x, pos.y, 0);
+                
+                float GetX()
+                {
+                    if (posOfPlayerOnScreen.x < 0) return 0;
+                    if (posOfPlayerOnScreen.x > cam.pixelWidth) return cam.pixelWidth;
+                    return posOfPlayerOnScreen.x;
+                }
+                
         }
         
         public void SetHealth(int health)

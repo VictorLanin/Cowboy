@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-//todo добавить энемибэк
 namespace LaninCode
 {
     [RequireComponent(typeof(Destructible))]
@@ -23,8 +22,8 @@ namespace LaninCode
         {
             _destructible=GetComponent<Destructible>();
             _animator = GetComponent<Animator>();
-            _destructible.SetDestructee(this);
             _enemyData = EnemyData.GetEnemyData(_nameOfEnemy);
+            _destructible.SetDestructee(this);
             _equippedWeapon = WeaponDataManager.EnemyWeapons[_enemyData.AvailableWeapons[0]];
         }
         
@@ -40,7 +39,7 @@ namespace LaninCode
             _animator.SetInteger("Health",health);
         }
 
-        public int MaxHealth => _enemyData.MaxHealth;
+        public int MaxHealth => _enemyData==null?100:_enemyData.MaxHealth;
 
         public void BackToPool()
         {

@@ -1906,8 +1906,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _nameOfEnemy: Fly
-  _maxHealth: 20
-  availableWeaponNames: 
 --- !u!114 &7260239793124025096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1923,8 +1921,8 @@ MonoBehaviour:
   _tagsOfWeapon:
   - PlayerWeapon
   - EnvDamage
-  maxHealth: 20
-  currentHealth: 20
+  maxHealth: 10
+  currentHealth: 10
 --- !u!1001 &8819356290848245148
 PrefabInstance:
   m_ObjectHideFlags: 0
