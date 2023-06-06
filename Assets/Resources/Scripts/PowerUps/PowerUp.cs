@@ -1,16 +1,18 @@
 using System;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace LaninCode
 {
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(Destructible))]
-    public abstract class PowerUp:MonoBehaviour,IOnDamage
+    public abstract class PowerUp:MonoBehaviour,IPoolable,IOnDamage
     {
         private Animator _anim; 
         public Destructible Destruct { get; private set; }
         public Player PlayerToGetPowerUp { get; private set; }
         private Rigidbody2D _rbody2d;
+        private IObjectPool<IPoolable> _pool;
         private const float JumpSpeed=2f;
         
         public virtual void Awake()
@@ -50,6 +52,7 @@ namespace LaninCode
             PlayerToGetPowerUp=Player.GetPlayer(nameOfPlayer);
         }
  
+        //todo не забыть поменять ресурсы 
         public static Sprite LoadSprite(string endingOfFile)
         {
             var spr = UnityEngine.Resources.Load<Sprite>($"Sprites/PowerUps/{endingOfFile}");
@@ -66,6 +69,22 @@ namespace LaninCode
         {
             _anim.StopPlayback();
             Destruct.Activate(OnOff.Off);
+        }
+
+        public void Activate(OnOff onOff)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Name { get; }
+        public void Destroy()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetPool(IObjectPool<IPoolable> pool)
+        {
+            _pool = pool;
         }
     }
 }

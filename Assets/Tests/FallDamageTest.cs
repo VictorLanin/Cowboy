@@ -20,7 +20,6 @@ namespace Tests
             playerGo.name = "PlayerOne";
             _player = playerGo.GetComponent<Player>();
             var playerCursor = playerGo.GetComponentInChildren<PlayerCursor>(true);
-            playerCursor.Awake();
             var damageEnv = new GameObject();
             
         }

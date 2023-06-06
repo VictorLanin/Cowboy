@@ -3,17 +3,13 @@ using UnityEngine;
 
 namespace LaninCode
 {
-    public abstract class DamagingEnvironmentData : ScriptableObject,IWeapon
+    public abstract class DamagingEnvironmentData : ScriptableObject,IWeaponData
     {
         public abstract EnvironmentDamageName Name { get; }
+        public string NameOfWeapon => Name.ToString();
         public abstract int Damage { get; }
-        public abstract bool CanDamage { get; }
-        public void ApplyDamage(Destructible destructible)
-        {
-            destructible.GetDamage(Damage);
-        }
 
-        public static IWeapon CreateEnvironment(EnvironmentDamageName environmentDamageName)
+        public static IWeaponData CreateEnvironment(EnvironmentDamageName environmentDamageName)
         {
             switch (environmentDamageName)
             {

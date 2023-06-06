@@ -1,42 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.Pool;
 
 namespace LaninCode
 {
     [RequireComponent(typeof(Destructible))]
-    public class Enemy : Poolable,IOnDamage
+    public class Enemy :MonoBehaviour, IPoolable,IOnDamage
     {
         private Destructible _destructible;
         private Animator _animator;
         [SerializeField] string _nameOfEnemy;
-        
-        //todo сделать орудия 
-
-        private IWeapon _equippedWeapon;
-
         private EnemyData _enemyData;
-        private void Awake()
+        private IObjectPool<IPoolable> _pool;
+        public EnemyWeaponData EquippedWeaponData => WeaponManager.GetEnemyWeapon(_enemyData.AvailableWeapons[0]) as EnemyWeaponData;
+
+        public virtual void Awake()
         {
             _destructible=GetComponent<Destructible>();
             _animator = GetComponent<Animator>();
             _enemyData = EnemyData.GetEnemyData(_nameOfEnemy);
             _destructible.SetDestructee(this);
-            _equippedWeapon = WeaponDataManager.EnemyWeapons[_enemyData.AvailableWeapons[0]];
         }
         
-        public override void Activate(OnOff onOff)
+        public void Activate(OnOff onOff)
         {
             _destructible.Activate(onOff);
+            _animator.enabled = onOff == OnOff.On;
         }
 
-        public override string Name => _nameOfEnemy;
-        
+        public string Name => _nameOfEnemy;
+        public void Destroy()
+        {
+            GameObject.Destroy(this);
+        }
+
+        public void SetPool(IObjectPool<IPoolable> pool)
+        {
+            _pool = pool;
+        }
+
+
         public void SetHealth(int health)
         {
             _animator.SetInteger("Health",health);
+        }
+
+        private void OnBecameInvisible()
+        {
+            BackToPool();
         }
 
         public int MaxHealth => _enemyData==null?100:_enemyData.MaxHealth;
@@ -45,8 +56,8 @@ namespace LaninCode
         {
             Activate(OnOff.Off); 
             ObjectPoolsManager.Release(this);
-            _animator.SetInteger("Health",_destructible.MaxHealth);
             _animator.StopPlayback();
+            _animator.SetInteger("Health",_destructible.MaxHealth);
         }
         
     }

@@ -7,6 +7,7 @@ namespace LaninCode
         private const int HealthAddOn=20;
         private const string SpriteName = "Small_Health";
         private static Sprite _healthSprite;
+
         public override void Awake()
         {
             base.Awake();

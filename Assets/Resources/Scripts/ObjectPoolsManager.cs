@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,18 +15,27 @@ namespace LaninCode
         private Dictionary<string, ObjectPoolWrapper> CreateWrappers()
         {
             var dict = new Dictionary<string, ObjectPoolWrapper>();
-            dict.Add("Fly",ObjectPoolWrapper.CreateInstance("Fly",10));
+            dict.Add("Fly",CreatePoolWrapper("Fly",8));
+            dict.Add("SmallHealth",CreatePoolWrapper("SmallHealth",4));
             return dict;
         }
 
-        public static Poolable Get(string nameOfItem)
+        public static IPoolable Get(string nameOfItem)
         {
+            if (!_pools.ContainsKey(nameOfItem)) throw new KeyNotFoundException($"{nameOfItem} not found");
             return _pools[nameOfItem].Get();
         }
 
-        public static void Release(Poolable poolable)
+        public static void Release(IPoolable poolable)
         {
             _pools[poolable.Name].Release(poolable);
+        }
+
+        private static ObjectPoolWrapper CreatePoolWrapper(string nameOfItem, int amountOfItems)
+        {
+            var poolWrapper = ScriptableObject.CreateInstance<ObjectPoolWrapper>();
+            poolWrapper.CreatePoolWrapper(nameOfItem,amountOfItems);
+            return poolWrapper;
         }
     }
 }

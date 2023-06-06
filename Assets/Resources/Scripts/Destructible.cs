@@ -12,6 +12,7 @@ namespace LaninCode
         [SerializeField] private int maxHealth;
         [SerializeField] private int currentHealth;
         private IWeapon _weapon;
+        private IWeaponData _weaponData;
         
         public float HealthRelatToMaxHealth
         {
@@ -54,7 +55,7 @@ namespace LaninCode
         private void OnTriggerEnter2D(Collider2D col)
         {
             if(!_checker.CheckForAppropriateTag(col.tag)) return;
-            _weapon = WeaponDataManager.GetWeapon(col.name);
+            _weapon= WeaponManager.GetWeapon(col.name);
              StartCoroutine(_cor);
         }
 
@@ -67,7 +68,7 @@ namespace LaninCode
                 {
                     _weapon.ApplyDamage(this);
                     _renderer.color=Color.red;
-                    yield return (_weapon is IDamageDelay delayable)? new WaitForSeconds(delayable.DamageDelay) : null;
+                    yield return (_weaponData is IDamageDelay delayable)? new WaitForSeconds(delayable.DamageDelay) : null;
                 }
                 _renderer.color = Color.white;
                 yield return null;

@@ -6,7 +6,6 @@ namespace LaninCode
         private EnvironmentDamageName _name;
         public override EnvironmentDamageName Name => _name;
         public override int Damage => _damage;
-        public override bool CanDamage => true;
 
         public void Initialize(int damage, EnvironmentDamageName damageName)
         {

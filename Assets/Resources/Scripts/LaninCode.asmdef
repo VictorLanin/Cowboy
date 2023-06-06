@@ -1,4 +1,19 @@
 {
-	"name": "LaninCode",
-	"references":[ "GUID:1661c129c3bee9a029bbc4cbc58013eb" ]
+    "name": "LaninCode",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1661c129c3bee9a029bbc4cbc58013eb",
+        "GUID:9e24947de15b9834991c9d8411ea37cf",
+        "GUID:69448af7b92c7f342b298e06a37122aa",
+        "GUID:84651a3751eca9349aac36a66bba901b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

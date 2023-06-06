@@ -10,7 +10,7 @@ namespace LaninCode
             new() { PlayerWeaponName.MachineGun, PlayerWeaponName.Grenade };
         public int MaxHealth => MechMaxHealth;
         public List<PlayerWeaponName> AllowedWeapons => MechAllowedWeapons;
-        private LinkedList<PlayerWeaponName> _equippedWeapons = new LinkedList<PlayerWeaponName>(new [] { PlayerWeaponName.MachineGun });
+        private LinkedList<PlayerWeaponName> _equippedWeapons = new LinkedList<PlayerWeaponName>(new [] { PlayerWeaponName.MachineGun,PlayerWeaponName.Grenade });
         private const int MaxWeaponsNumber=3;
         private LinkedListNode<PlayerWeaponName> _currentNode;
 

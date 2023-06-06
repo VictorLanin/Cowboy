@@ -1,10 +1,10 @@
 namespace LaninCode
 {
-    public interface ILimitedAmmo:IWeapon
+    public interface ILimitedAmmo:IWeaponData
     {
         public int MaxAmmo { get; }
-        public int ReduceAmmoRate { get; } 
-        public int AvailableAmmo { get; set; }
+        public int ReduceAmmoRate { get; }
+        public int InitialAmmo { get; }
 
     }
 }

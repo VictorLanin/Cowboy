@@ -1,17 +1,17 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 namespace LaninCode
 {
-    [RequireComponent(typeof(Collider2D))]
-    [RequireComponent(typeof(Animator))]
-    public class PlayerProjectile : Poolable
+    public class ProjectileGameObject : MonoBehaviour
     {
-        [SerializeField] private PlayerWeaponName nameOfProjectile;
         private Collider2D _collider2D;
         private SpriteRenderer _renderer;
         private Animator _anim;
-        private void Awake()
+        private static readonly int BlowUp = Animator.StringToHash("BlowUp");
+        
+        public void Awake()
         {
             _collider2D = GetComponent<Collider2D>();
             _renderer = GetComponent<SpriteRenderer>();
@@ -22,32 +22,42 @@ namespace LaninCode
         /// Coroutine for projectile movement
         /// </summary>
         /// <param name="destination"> location go to </param>
-        /// <param name="speed">speed of projectile</param>
+        /// <param name="speed"></param>
         public void MoveToTarget(Vector3 destination, float speed)
         {
             StartCoroutine(MoveTo(destination,speed));
             
-            IEnumerator MoveTo(Vector3 destination, float speed)
+            IEnumerator MoveTo(Vector3 destinationOfProj, float speedOfProj)
             {
-                while (!transform.position.Equals(destination))
+                Activate(OnOff.On);
+                while (!transform.position.Equals(destinationOfProj))
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, destination,  speed* Time.deltaTime);
+                    transform.position = Vector3.MoveTowards(transform.position, destinationOfProj,  speedOfProj* Time.deltaTime);
                     yield return null;
                 }
-                _anim.SetTrigger("BlowUp");
+                _anim.SetTrigger(BlowUp);
             }
         }
         /// <summary>
         /// "Turns" On-Off specific gameobject without disabling it off completely 
         /// </summary>
         /// <param name="onOff"></param>
-        public override void Activate(OnOff onOff)
+        public void Activate(OnOff onOff)
         {
+            _renderer.enabled = onOff == OnOff.On;
             _collider2D.enabled = onOff == OnOff.On;
-            _renderer.enabled=onOff == OnOff.On;
             _anim.StopPlayback();
-        }
-        public override string Name => nameOfProjectile.ToString();
 
+        }
+
+        public void Destroy()
+        {
+            GameObject.Destroy(this);
+        }
+
+        public void SetData(IProjectileData projData)
+        {
+            _renderer.sprite = projData.SpriteOfProjectile;
+        }
     }
 }

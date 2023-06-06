@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace LaninCode
 {
-    [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
     [RequireComponent(typeof(Destructible))]
-    [RequireComponent(typeof(ProjectileManager))]
     public class Player : MonoBehaviour, IOnDamage
     {
         private float _speed = 10f;
@@ -15,31 +15,38 @@ namespace LaninCode
         private float _horAxis;
         private Destructible _destructible;
         private bool _isJumping;
-        private PlayerCursor _playerCursor;
+        private NonProjectileWeapon _playerCursor;
         private IMech _equippedMech;
         public PlayerWeaponName PlayerWeaponSelected => _equippedMech?.SelectedPlayerWeapon ?? PlayerWeaponName.MachineGun;
 
-        private ProjectileManager _projectileManager;
+        private bool _cantMovePlayer=true;
+        private SortedList<string, IWeapon> _weapons = new();
 
-        private bool _canMovePlayer=true;
-        
-        
+        private IWeapon _selectedWeapon;
         public void Awake()
         {
             _equippedMech = new BasicMech();
-            _playerCursor = GetComponentInChildren<PlayerCursor>(true);
-            _projectileManager = GetComponent<ProjectileManager>();
-            _projectileManager.GetPosition += () => CursorPosistion;
+            _playerCursor = GetComponentInChildren<NonProjectileWeapon>(true);
+            _weapons.Add(_playerCursor.NameofWeapon,_playerCursor);
             AddToPlayers();
-            _rbody = GetComponent<Rigidbody2D>();
+            AddWeapons();
             _destructible = GetComponent<Destructible>();
             _destructible.SetDestructee(this);
-            SetWeapon(_equippedMech.SelectedPlayerWeapon);
+            _selectedWeapon=SetWeapon(PlayerWeaponSelected);
             
             void AddToPlayers()
             {
                 if (_playersAvailable.ContainsKey(name)) return;
                 _playersAvailable.Add(name, this);
+            }
+
+            void AddWeapons()
+            {
+                var weapons = GetComponentsInChildren<ProjectileInstancer>();
+                for (int i = 0; i < weapons.Length; i++)
+                {
+                    _weapons.Add(weapons[i].NameofWeapon,weapons[i]);
+                }
             }
         }
 
@@ -61,8 +68,12 @@ namespace LaninCode
             {
                 _isJumping = true;
             }
-
-            if (_canMovePlayer)
+            _cantMovePlayer=Input.GetButton("Fire1");
+            if (_cantMovePlayer)
+            {
+                _selectedWeapon.TryFiring();
+            }
+            else
             {
                 _horAxis = Input.GetAxis("Shoot Hor");
                 if (_isJumping)
@@ -76,7 +87,6 @@ namespace LaninCode
                 {
                     transform.Translate(Vector2.right * (_speed * _horAxis * Time.deltaTime));
                 }
-            }
 
                 var cam = Camera.main;
                 var posOfPlayerOnScreen = cam.WorldToScreenPoint(transform.position);
@@ -84,75 +94,70 @@ namespace LaninCode
                 Vector3 posPlayerPosition = new Vector3(x, posOfPlayerOnScreen.y, cam.nearClipPlane);
                 var pos = cam.ScreenToWorldPoint(posPlayerPosition);
                 transform.position = new Vector3(pos.x, pos.y, 0);
-                
+
                 float GetX()
                 {
                     if (posOfPlayerOnScreen.x < 0) return 0;
                     if (posOfPlayerOnScreen.x > cam.pixelWidth) return cam.pixelWidth;
                     return posOfPlayerOnScreen.x;
                 }
-                
+            }
         }
         
         public void SetHealth(int health)
         {
-            Debug.Log(health);
+            _destructible.CurrentHealth -= health;
             //Debug.Log("Game over!");
         }
 
         public int MaxHealth => _equippedMech.MaxHealth;
-
-
+        
         public void AddAmmo(PlayerWeaponName nameOfPlayerWeapon, int amountToAdd)
         {
-            var weaponAmmo = GetWeaponBack(nameOfPlayerWeapon) as ILimitedAmmo;
-            if (weaponAmmo == null) throw new InvalidCastException($"Cant cast {nameOfPlayerWeapon} to ILimitedAmmo");
-            weaponAmmo.AvailableAmmo += amountToAdd;
+            if (!_ammos.ContainsKey(nameOfPlayerWeapon))
+                throw new KeyNotFoundException($"{nameOfPlayerWeapon} not found in weaponsAmmo");
+            _ammos[nameOfPlayerWeapon].AvailableAmmo += amountToAdd;
         }
 
-        public string Ammo
+        public string AmmoText
         {
             get
             {
-                if (_equippedMech == null) return "-1";
-                var selectedWeapon = _weapons[_equippedMech.SelectedPlayerWeapon];
-                return selectedWeapon is ILimitedAmmo ammoedWeapon ? ammoedWeapon.AvailableAmmo.ToString() : "-1";
+                if (_equippedMech == null || !_ammos.ContainsKey(PlayerWeaponSelected)) return "-1";
+                return _ammos[PlayerWeaponSelected].ToString();
             }
         }
         
-        public Vector3 CursorPosistion => _playerCursor.transform.position;
-
-        private readonly Dictionary<PlayerWeaponName, PlayerWeapon> _weapons = new()
+        public Vector3 CursorPosition => _playerCursor.transform.position;
+        
+        public IWeapon GetWeaponData(PlayerWeaponName nameOfPlayerWeapon)
         {
-            { PlayerWeaponName.MachineGun, PlayerWeapon.CreateInstance(PlayerWeaponName.MachineGun) },
-            { PlayerWeaponName.Grenade, PlayerWeapon.CreateInstance(PlayerWeaponName.Grenade) }
-        };
-
-
-        public PlayerWeapon GetWeaponBack(PlayerWeaponName nameOfPlayerWeapon)
-        {
-            if (!_weapons.ContainsKey(nameOfPlayerWeapon))
+            if (!_weapons.ContainsKey(nameOfPlayerWeapon.ToString()))
                 throw new KeyNotFoundException($"No weapon with this name {nameOfPlayerWeapon}");
-            return _weapons[nameOfPlayerWeapon];
+            return _weapons[nameOfPlayerWeapon.ToString()];
         }
 
         public void GetNext()
         {
             var weaponName = _equippedMech.GetNextWeapon();
-            SetWeapon(weaponName);
+           _selectedWeapon=SetWeapon(weaponName);
         }
 
-        private void SetWeapon(PlayerWeaponName playerWeaponSelected)
+        private IWeapon SetWeapon(PlayerWeaponName playerWeaponSelected)
         {
-            var selectedWeapon = _weapons[playerWeaponSelected];
+            var selectedWeapon = WeaponManager.GetPlayerWeapon(playerWeaponSelected);
+            var isProjectile=selectedWeapon is IProjectileData;
             _playerCursor.gameObject.name = name + ' ' + playerWeaponSelected;
-            _playerCursor.CursorCollider.enabled = selectedWeapon is not ILimitedAmmo;
+            _playerCursor.CursorCollider.enabled = !isProjectile;
+            if (isProjectile) return _weapons[playerWeaponSelected.ToString()];
+            _playerCursor.WeaponData = selectedWeapon;
+            return _playerCursor;
         }
 
         public void GetPrevious()
         {
             var weaponName = _equippedMech.GetPreviousWeapon();
-            SetWeapon(weaponName);
+           _selectedWeapon=SetWeapon(weaponName);
         }
 
         private static Dictionary<string, Player> _playersAvailable = new(4);
@@ -161,29 +166,60 @@ namespace LaninCode
         {
             if (!_playersAvailable.ContainsKey(playerID)) throw new KeyNotFoundException($"no {playerID} in players");
             return _playersAvailable[playerID];
-        } 
+        }
 
-        public static PlayerWeapon GetDamagingWeapon(string colName)
+        public static Vector3 GetPlayerPosition()
+        {
+            if (_playersAvailable.Count == 0) return _playersAvailable.First().Value.transform.position;
+            throw new NullReferenceException();
+        }
+        public static IWeapon GetDamagingWeapon(string colName)
         {
             var keys = colName.Split(' ');
             var playerName = keys[0];
             if (!_playersAvailable.ContainsKey(playerName)) return null;
             var player = _playersAvailable[playerName];
-            return player.GetWeaponBack(Enum.Parse<PlayerWeaponName>(keys[1]));
+            return player.GetWeaponData(Enum.Parse<PlayerWeaponName>(keys[1]));
         }
-
-        public void TryFiring(bool isFiring)
-        {
-            _canMovePlayer = !isFiring;
-            var weapon=_weapons[PlayerWeaponSelected];
-            weapon.TryFiring(isFiring);
-            if (weapon is not IProjectile projectileWeapon) return;
-            _projectileManager.InstantiateProjectile(projectileWeapon);
-        }
-
+        
         public void AddHealth(int health)
         {
             _destructible.CurrentHealth =+ health;
+        }
+        //private static bool _isBusyGetingPowerUp = false;
+
+        // private static PowerUp GetHealthPowerUp(Player player)
+        // {
+        //     int maxRatio = 0;
+        //     string nameOfItem=string.Empty;
+        //     if (player._destructible.HealthRelatToMaxHealth > 0.6f) return null;
+        //     if (player._destructible.HealthRelatToMaxHealth < 0.3f)
+        //     {
+        //         maxRatio = 50;
+        //         nameOfItem = "SmallHealth";
+        //     }
+        //     bool wasSuccess = Random.Range(0, maxRatio)<maxRatio;
+        //     return wasSuccess ? ObjectPoolsManager.Get(nameOfItem) as PowerUp : null;
+        // }
+        //
+        // public static PowerUp GetPowerUp()
+        // {
+        //     PowerUp powerUp;
+        //     if (_isBusyGetingPowerUp) return null;
+        //     foreach (var player in _playersAvailable.Values)
+        //     {
+        //         powerUp = GetHealthPowerUp(player);
+        //         if (powerUp == null) continue;
+        //         return powerUp;
+        //     }
+        //     return null;
+        // }
+        
+        private SortedList<PlayerWeaponName, IAmmoWeapon> _ammos = new();
+        public void AddAmmoCounter(PlayerWeaponName playerWeaponName,IAmmoWeapon ammoWeapon)
+        {
+            if (_ammos.ContainsKey(playerWeaponName)) return;
+            _ammos.Add(playerWeaponName,ammoWeapon);
         }
     }
 } 
