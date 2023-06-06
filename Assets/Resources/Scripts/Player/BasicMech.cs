@@ -38,5 +38,4 @@ namespace LaninCode
         }
         public PlayerWeaponName SelectedPlayerWeapon => _currentNode.Value;
     }
-
 }
