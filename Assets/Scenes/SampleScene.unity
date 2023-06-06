@@ -330,7 +330,7 @@ MonoBehaviour:
   bottomType: 1
   topType: 1
   mAtlas: {fileID: 11400000, guid: ae341e6965852c956b673b4c6bce205f, type: 2}
-  mSpriteName: MachineGun
+  mSpriteName: Grenade
   mFixedAspect: 0
   mFillCenter: 1
 --- !u!114 &258048919
@@ -1938,7 +1938,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: 19a9abb883540be48b75b951a927ae03, type: 3}
   mFont: {fileID: 0}
-  mText: -1
+  mText: 
   mFontSize: 40
   mFontStyle: 1
   mAlignment: 0

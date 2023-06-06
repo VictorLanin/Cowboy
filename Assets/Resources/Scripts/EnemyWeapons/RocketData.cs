@@ -19,5 +19,4 @@ namespace LaninCode
             _sprite = handle.Task.Result;
         }
     }
-    
 }
